@@ -15,7 +15,7 @@ using namespace std;
 template<class L>
 void selectionsort(L &l){
     // testing purposes
-    int moves = 0;
+    // int moves = 0;
     
     // pointer to the smallest value of the unsorted group
     auto foundIt = begin(l);
@@ -36,7 +36,7 @@ void selectionsort(L &l){
         } // end for loop
         if(*posedTaBe != *foundIt ){
             swap(*posedTaBe, *foundIt); // swap the element into place
-            moves += 3; // swaps are 3 moves
+            // moves += 3; // swaps are 3 moves
         }
         ++traveler; // increment count
     } // end while loop
