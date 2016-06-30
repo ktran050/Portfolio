@@ -24,36 +24,42 @@ int main(){
     int x, y;
     while(op!='e'){
         cout<<"What operation would you like to perform: add(+), subract(-),"
-        << " divide(/), multiply(*), [e]xit?";
+        << " divide(/), multiply(*), exit(e)? ";
         cin>>op;
         switch(op){
             case '+':
+            cout<<"Input first operand ";
             cin>>x;
+            cout<<"Input second operand ";
             cin>>y;
             cout<<x<<"+"<<y<<"="<<add(x,y)<<endl;
             break;
             
             case '-':
+            cout<<"Input first operand ";
             cin>>x;
+            cout<<"Input second operand ";
             cin>>y;
             cout<<x<<"-"<<y<<"="<<subtract(x,y)<<endl;
             
             case '/':
+            cout<<"Input first operand ";
             cin>>x;
+            cout<<"Input second operand ";
             cin>>y;
             cout<<x<<"/"<<y<<"="<<divide(x,y)<<endl;
             break;
             
             case '*':
+            cout<<"Input first operand ";
             cin>>x;
+            cout<<"Input second operand ";
             cin>>y;
             cout<<x<<"*"<<y<<"="<<multiply(x,y)<<endl;
             break;
             
             case 'e':
-            cin>>x;
-            cin>>y;
-            cout<<"Sorry, try again"<<endl;
+            cout<<"Sorry, try again."<<endl;
         }
     }
     return 0;
