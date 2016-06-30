@@ -15,16 +15,17 @@ int main(){
         cin>>guess;
         
         if(guess<number)
-        cout<<"Too low"<<endl;
+        cout<<"Too low.";
         else if(guess>number)
-        cout<<"Too high"<<endl;
+        cout<<"Too high.";
         ++trycount;
+        cout << "You have "<<8-trycount<<" tries left."<<endl;
     }
     
     if(guess==number)
-    cout<<"You guessed the number!";
+    cout<<"You guessed the number!"<<endl;
     else
-    cout<<"Sorry, the number was: "<<number;
+    cout<<"Sorry, the number was: "<<number<<endl;
     
     return 0;
 }
