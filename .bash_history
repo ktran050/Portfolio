@@ -167,3 +167,78 @@ git commit -m "added xv6"
 git push origin master
 git remote -v
 git remote help
+ls
+git pull origin master
+ls
+cd ~
+ls
+rm -r xv6
+y
+ls
+git add -A
+git commit -m "
+git commit -m "removed excess xv6 file"
+git push origin master
+grep "exit("
+grep "exit(" *.c
+ls
+grep "wait(" *.c
+vim proc.c
+mergetool
+git mergetool
+vim proc.h
+~/.viminfo
+ls
+grep "wait(" *.c
+vim sysproc.c
+ls
+vim proc.h
+vim proc.c
+grep "wait(" *.c
+vim proc.c
+vim sysproc.c 
+vim proc.c
+vim sysproc.c 
+grep "argptr" *.c
+vim syscall.c
+vim sysproc.c 
+ls -A
+rm $HOME/.viminfo
+vim echo,c
+vim echo.c
+grep "argptr(" *.c
+vim syscall.c
+vim proc.c
+vim proc.h
+grep "wpid" *.c
+vim proc.h
+vim proc.c
+grep "status" *.c
+grep -r "status"
+clear
+grep -r "status"
+grep "status" *.c
+grep "exit(" *.c
+vim mkfs.c
+ls
+vim proc.c 
+git pull origin master
+ls
+grep "exit(" *.c
+vim usertests.c
+vim wc.c
+vim zombie.c 
+vim usertests.c
+git pull origin master
+git commit -m "changed usertest.c exit calls lines 607+"
+git add usertests.c
+git commit -m "changed usertest.c exit calls lines 607+"
+git pull origin master
+git mergetool
+vim usertests.c 
+git push origin master
+vim proc.c
+vim usertest.c
+vim usertests.c 
+grep "wait(" *.c
+vim sh.c

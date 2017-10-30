@@ -65,7 +65,7 @@ exitiputtest(void)
       printf(stdout, "unlink ../iputdir failed\n");
       exit(-1);
     }
-    exit();
+    exit(0);
   }
   wait(&status);
   printf(stdout, "exitiput test ok\n");
