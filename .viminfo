@@ -8,7 +8,7 @@
 # hlsearch on (H) or off (h):
 ~H
 # Last Search Pattern:
-~MSle0~/status != NULL
+~MSle0~/\<proc\>
 
 # Last Substitute String:
 $exit(-1)
@@ -16,6 +16,7 @@ $exit(-1)
 # Command Line History (newest to oldest):
 :wq
 :w
+:q
 :'<,'>norm i//
 :'<,'>norm //
 :'<,'>norm ^x
@@ -24,11 +25,13 @@ $exit(-1)
 :q!
 :U
 :u
-:q
 :Q
 :s/exit(1)/exit(-1)/c g
 
 # Search String History (newest to oldest):
+?/\<proc\>
+?/exitstatus
+?/"proc"
 ?/status != NULL
 ?//
 ?/waitpid
@@ -218,19 +221,27 @@ $exit(-1)
 	#
 
 # File marks:
-'0  322  20  ~/proc.c
-'1  373  20  ~/proc.c
-'2  72  1  ~/testfile.c
-'3  95  1  ~/testfile.c
-'4  140  0  ~/testfile.c
-'5  105  4  ~/testfile.c
-'6  100  6  ~/testfile.c
-'7  28  20  ~/testfile.c
-'8  9  1  ~/testfile.c
-'9  420  6  ~/usertests.c
+'0  257  9  ~/proc.c
+'1  263  25  ~/proc.c
+'2  235  0  ~/proc.c
+'3  234  2  ~/proc.c
+'4  52  6  ~/proc.h
+'5  365  9  ~/proc.c
+'6  322  20  ~/proc.c
+'7  373  20  ~/proc.c
+'8  72  1  ~/testfile.c
+'9  95  1  ~/testfile.c
 
 # Jumplist (newest first):
--'  322  20  ~/proc.c
+-'  257  9  ~/proc.c
+-'  263  10  ~/proc.c
+-'  260  0  ~/proc.c
+-'  235  0  ~/proc.c
+-'  234  2  ~/proc.c
+-'  52  6  ~/proc.h
+-'  61  0  ~/proc.h
+-'  365  8  ~/proc.c
+-'  322  6  ~/proc.c
 -'  373  6  ~/proc.c
 -'  358  2  ~/proc.c
 -'  72  1  ~/testfile.c
@@ -281,7 +292,6 @@ $exit(-1)
 -'  93  4  ~/mkfs.c
 -'  1  0  ~/mkfs.c
 -'  241  4  ~/proc.c
--'  61  0  ~/proc.h
 -'  1  0  ~/proc.h
 -'  1  0  ~/proc.c
 -'  80  0  ~/syscall.c
@@ -321,25 +331,46 @@ $exit(-1)
 -'  1  0  ~/echo.c
 -'  1  0  ~/echo,c
 -'  1  0  ~/echo,c
--'  1  0  ~/echo.c
--'  1  0  ~/echo,c
--'  1  0  ~/echo,c
--'  80  0  ~/syscall.c
--'  1  0  ~/syscall.c
--'  1  0  ~/echo.c
 
 # History of marks within files (newest to oldest):
 
 > ~/proc.c
-	"	322	20
-	^	322	21
-	.	322	20
+	"	257	9
+	^	257	10
+	.	257	9
 	+	312	1
 	+	313	4
 	+	358	15
 	+	373	20
 	+	312	17
 	+	322	20
+	+	364	61
+	+	364	60
+	+	364	59
+	+	364	58
+	+	364	57
+	+	364	56
+	+	364	55
+	+	364	54
+	+	364	53
+	+	364	52
+	+	364	51
+	+	364	50
+	+	364	49
+	+	364	48
+	+	364	47
+	+	364	46
+	+	364	45
+	+	364	44
+	+	365	0
+	+	234	2
+	+	257	10
+	+	259	22
+	+	263	25
+	+	257	9
+
+> ~/proc.h
+	"	52	6
 
 > ~/testfile.c
 	"	72	1
@@ -499,9 +530,6 @@ $exit(-1)
 
 > ~/mkfs.c
 	"	93	4
-
-> ~/proc.h
-	"	61	0
 
 > ~/syscall.c
 	"	80	0

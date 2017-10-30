@@ -231,7 +231,7 @@ exit(status)
   struct proc *p;
   int fd;
 
-  proc->exitstatus = status;
+  curproc->exitstatus = status;
 
   if(curproc == initproc)
     panic("init exiting");
@@ -254,13 +254,13 @@ exit(status)
   // Parent might be sleeping in wait().
   wakeup1(curproc->parent);
   
-  if(proc->wpid_pindex != 0) {
+  if(curproc->wpid_pindex != 0) {
       int i;
-      for(i = 0; i< proc->wpid_pindex; i++)
+      for(i = 0; i< curproc->wpid_pindex; i++)
       {
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
         {
-          if(p->pid == proc->wpidpar[i])
+          if(p->pid == curproc->wpidpar[i])
             wakeup1(p);
         }
       }
