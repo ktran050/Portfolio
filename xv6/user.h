@@ -23,6 +23,7 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int waitpid(int pid, int *status, int options);
 
 // ulib.c
 int stat(char*, struct stat*);
