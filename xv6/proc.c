@@ -319,6 +319,39 @@ wait(int *status)
   }
 }
 
+int waitpid(int pid, int *status, int options){
+  struct proc *p;
+  struct proc *curproc = myproc();
+  bool pidSeen=false;
+  
+  acquire(&ptable.lock);
+  for(;;){
+    // Scan through table looking for the process with the passed in PID
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->pid == pid){
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->state = UNUSED;
+	if(status != NULL)		// if we don't receive NULL as an arg
+	    status=&(p->exitstatus);	// if we DO receive null the child exit status does nothing
+	pidSeen=true;			// We saw the PID so we can set our flag
+        release(&ptable.lock)
+        return pid;
+      }
+    }
+    if(pidSeen==false)
+      return -1;  
+    
+    // Wait for the process with the PID to exit
+    sleep(curproc, &ptable.lock);
+  }
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
