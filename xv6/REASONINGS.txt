@@ -1,0 +1,2 @@
+Defined NULL because it wasn't already defined
+Replaced wait() with wait(NULL) because we weren't doing anything with the child return status before so there was no reason NOT to save time and call wait(NULL)

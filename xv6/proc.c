@@ -232,9 +232,12 @@ exit(int status)
   int fd;
 
   if(curproc == initproc){
-    panic("init exiting");
     curproc->exitstatus=-1;
+    panic("init exiting");
   }
+
+  // Set the exitstatus of the current process
+  curproc->exitstatus=status;
 
   // Close all open files.
   for(fd = 0; fd < NOFILE; fd++){
@@ -263,14 +266,11 @@ exit(int status)
     }
   }
 
-  // Change the program exit status
-  curproc->exitstatus=0;
-
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
   sched();
-  panic("zombie exit");
   curproc->exitstatus=-1;
+  panic("zombie exit");
 }
 
 // Wait for a child process to exit and return its pid.
