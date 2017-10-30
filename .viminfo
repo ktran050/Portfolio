@@ -218,19 +218,20 @@ $exit(-1)
 	#
 
 # File marks:
-'0  373  20  ~/proc.c
-'1  72  1  ~/testfile.c
-'2  95  1  ~/testfile.c
-'3  140  0  ~/testfile.c
-'4  105  4  ~/testfile.c
-'5  100  6  ~/testfile.c
-'6  28  20  ~/testfile.c
-'7  9  1  ~/testfile.c
-'8  420  6  ~/usertests.c
-'9  68  9  ~/usertests.c
+'0  322  20  ~/proc.c
+'1  373  20  ~/proc.c
+'2  72  1  ~/testfile.c
+'3  95  1  ~/testfile.c
+'4  140  0  ~/testfile.c
+'5  105  4  ~/testfile.c
+'6  100  6  ~/testfile.c
+'7  28  20  ~/testfile.c
+'8  9  1  ~/testfile.c
+'9  420  6  ~/usertests.c
 
 # Jumplist (newest first):
--'  373  20  ~/proc.c
+-'  322  20  ~/proc.c
+-'  373  6  ~/proc.c
 -'  358  2  ~/proc.c
 -'  72  1  ~/testfile.c
 -'  95  0  ~/testfile.c
@@ -326,18 +327,19 @@ $exit(-1)
 -'  80  0  ~/syscall.c
 -'  1  0  ~/syscall.c
 -'  1  0  ~/echo.c
--'  1  0  ~/echo,c
 
 # History of marks within files (newest to oldest):
 
 > ~/proc.c
-	"	373	20
-	^	373	21
-	.	373	20
+	"	322	20
+	^	322	21
+	.	322	20
 	+	312	1
 	+	313	4
 	+	358	15
 	+	373	20
+	+	312	17
+	+	322	20
 
 > ~/testfile.c
 	"	72	1
