@@ -8,28 +8,31 @@
 # hlsearch on (H) or off (h):
 ~H
 # Last Search Pattern:
-~MSle0~/\<proc\>
+~MSle0~/qemu
 
 # Last Substitute String:
 $exit(-1)
 
 # Command Line History (newest to oldest):
+:q
+:q!
 :wq
 :w
-:q
 :'<,'>norm i//
 :'<,'>norm //
 :'<,'>norm ^x
 :'<,'>norm i#
 :W
-:q!
 :U
 :u
 :Q
 :s/exit(1)/exit(-1)/c g
 
 # Search String History (newest to oldest):
+?/qemu
+?/\<->proc\>
 ?/\<proc\>
+?/\<pid\>
 ?/exitstatus
 ?/"proc"
 ?/status != NULL
@@ -221,24 +224,39 @@ $exit(-1)
 	#
 
 # File marks:
-'0  257  9  ~/proc.c
-'1  263  25  ~/proc.c
-'2  235  0  ~/proc.c
-'3  234  2  ~/proc.c
-'4  52  6  ~/proc.h
-'5  365  9  ~/proc.c
-'6  322  20  ~/proc.c
-'7  373  20  ~/proc.c
-'8  72  1  ~/testfile.c
-'9  95  1  ~/testfile.c
+'0  60  1  ~/xv6/Makefile
+'1  1  0  ~/make
+'2  233  0  ~/Makefile
+'3  336  14  ~/proc.c
+'4  364  36  ~/proc.c
+'5  356  17  ~/proc.c
+'6  52  2  ~/proc.h
+'7  267  2  ~/proc.c
+'8  257  9  ~/proc.c
+'9  263  25  ~/proc.c
 
 # Jumplist (newest first):
--'  257  9  ~/proc.c
+-'  60  1  ~/xv6/Makefile
+-'  58  24  ~/xv6/Makefile
+-'  54  9  ~/xv6/Makefile
+-'  1  0  ~/xv6/Makefile
+-'  1  0  ~/make
+-'  233  0  ~/Makefile
+-'  230  0  ~/Makefile
+-'  224  0  ~/Makefile
+-'  221  0  ~/Makefile
+-'  218  0  ~/Makefile
+-'  177  1  ~/Makefile
+-'  336  14  ~/proc.c
+-'  364  7  ~/proc.c
+-'  356  8  ~/proc.c
+-'  267  2  ~/proc.c
+-'  52  2  ~/proc.h
+-'  257  2  ~/proc.c
 -'  263  10  ~/proc.c
 -'  260  0  ~/proc.c
 -'  235  0  ~/proc.c
 -'  234  2  ~/proc.c
--'  52  6  ~/proc.h
 -'  61  0  ~/proc.h
 -'  365  8  ~/proc.c
 -'  322  6  ~/proc.c
@@ -265,7 +283,6 @@ $exit(-1)
 -'  42  8  ~/usertests.c
 -'  282  2  ~/usertests.c
 -'  1  0  ~/usertest.c
--'  177  10  ~/Makefile
 -'  59  1  ~/Makefile
 -'  1  0  ~/Makefile
 -'  106  1  ~/testfile.c
@@ -317,27 +334,25 @@ $exit(-1)
 -'  1  0  ~/echo,c
 -'  1  0  ~/echo.c
 -'  1  0  ~/echo,c
--'  1  0  ~/echo,c
--'  80  0  ~/syscall.c
--'  1  0  ~/syscall.c
--'  1  0  ~/echo.c
--'  1  0  ~/echo,c
--'  1  0  ~/echo,c
--'  1  0  ~/echo.c
--'  1  0  ~/echo,c
--'  1  0  ~/echo,c
--'  80  0  ~/syscall.c
--'  1  0  ~/syscall.c
--'  1  0  ~/echo.c
--'  1  0  ~/echo,c
--'  1  0  ~/echo,c
 
 # History of marks within files (newest to oldest):
 
+> ~/xv6/Makefile
+	"	60	1
+
+> ~/make
+	"	1	0
+
+> ~/Makefile
+	"	233	0
+	^	177	11
+	.	177	11
+	+	177	11
+
 > ~/proc.c
-	"	257	9
-	^	257	10
-	.	257	9
+	"	336	14
+	^	336	15
+	.	336	14
 	+	312	1
 	+	313	4
 	+	358	15
@@ -368,9 +383,11 @@ $exit(-1)
 	+	259	22
 	+	263	25
 	+	257	9
+	+	364	36
+	+	336	14
 
 > ~/proc.h
-	"	52	6
+	"	52	2
 
 > ~/testfile.c
 	"	72	1
@@ -509,12 +526,6 @@ $exit(-1)
 
 > ~/usertest.c
 	"	1	0
-
-> ~/Makefile
-	"	177	10
-	^	177	11
-	.	177	11
-	+	177	11
 
 > ~/sh.c
 	"	59	0

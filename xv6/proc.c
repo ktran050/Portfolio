@@ -333,7 +333,7 @@ int
 waitpid(int pid, int *status, int options) 
 {
   struct proc *p;
-  int havekids, pid;
+  int havekids;
   struct proc *curproc = myproc();
 
   acquire(&ptable.lock);
@@ -361,7 +361,7 @@ waitpid(int pid, int *status, int options)
         return pid;
       }
       else {
-      	p->wpidpar[p->wpid_pindex]=proc->pid;
+      	p->wpidpar[p->wpid_pindex]=curproc->pid;
         p->wpid_pindex++;
         break;
 	  } 
