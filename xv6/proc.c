@@ -330,8 +330,7 @@ int waitpid(int pid, int *status, int options){
   for(;;){
     // Scan through table looking for the process with the passed in PID
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->pid != pid)
-	continue;
+      if(p->pid != pid){
       if(p->state == ZOMBIE){
         kfree(p->kstack);
         p->kstack = 0;
@@ -342,16 +341,16 @@ int waitpid(int pid, int *status, int options){
         p->killed = 0;
         p->state = UNUSED;
 	if(status != NULL)		// if we don't receive NULL as an arg
-	  *status=p->exitstatus;	// if we DO receive null the child exit status does nothing
+	  *status= p->exitstatus;	// if we DO receive null the child exit status does nothing
 	pidSeen=true;			// We saw the PID so we can set our flag
         release(&ptable.lock);
         return pid;
       }
     }
-    
+    }
+
     if(pidSeen==false){
-	release(&ptable.lock);
-	return -1;
+      return -1;
     }
     
     // Wait for the process with the PID to exit
@@ -367,6 +366,7 @@ int waitpid(int pid, int *status, int options){
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+
 void
 scheduler(void)
 {
