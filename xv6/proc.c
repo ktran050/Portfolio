@@ -340,7 +340,7 @@ int waitpid(int pid, int *status, int options){
 	if(status != NULL)		// if we don't receive NULL as an arg
 	    status=&(p->exitstatus);	// if we DO receive null the child exit status does nothing
 	pidSeen=true;			// We saw the PID so we can set our flag
-        release(&ptable.lock)
+        release(&ptable.lock);
         return pid;
       }
     }
