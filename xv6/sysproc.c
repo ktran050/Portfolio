@@ -40,7 +40,13 @@ sys_waitpid(void)
   argptr(0,(char**) &status, sizeof(int*));
   argint(0,&options);
   return waitpid(pid, status, options);
-  return 0;
+}
+
+void sys_prioritySet(void)
+{
+  int priorityVal;
+  argint(0,&priorityVal);
+  prioritySet(priorityVal);
 }
 
 int

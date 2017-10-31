@@ -358,6 +358,10 @@ int waitpid(int pid, int *status, int options){
   }
 }
 
+void prioritySet(int priorityVal){
+  return;
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
