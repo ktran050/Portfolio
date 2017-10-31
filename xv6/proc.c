@@ -301,8 +301,8 @@ wait(int *status)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-	if(status != NULL)		// if we don't receive NULL as an arg
-	    status=&(p->exitstatus);	// if we DO receive null the child exit status does nothing
+		if(status != NULL)		// if we don't receive NULL as an arg
+	    	*status = p->exitstatus;	// if we DO receive null the child exit status does nothing
         release(&ptable.lock);
         return pid;
       }
@@ -311,6 +311,8 @@ wait(int *status)
     // No point waiting if we don't have any children.
     if(!havekids || curproc->killed){
       release(&ptable.lock);
+      if(status != NULL)
+        *status = -1;
       return -1;
     }
 
