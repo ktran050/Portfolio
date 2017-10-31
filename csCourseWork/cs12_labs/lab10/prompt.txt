@@ -1,0 +1,19 @@
+● For this exercise you will be using recursion to manipulate a string.
+
+● Your function should then reverse the contents of the string using recursion.
+
+● Your function may not use for loops, while loops, do while loops or any other iterative 
+
+approach.
+
+● The goal here is to implement a function that will have one string parameter that is to be 
+
+passed by reference.
+
+● The function definition should be named as follows: void reverse(string &s);
+
+● Your file should be named main.cpp.
+
+● It is important that you build a test harness to ensure your code is functioning correctly.
+
+● DO NOT USE GLOBAL VARIABLES.
