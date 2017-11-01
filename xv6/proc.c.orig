@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "stdio.h"
 
 struct {
   struct spinlock lock;
@@ -328,8 +329,12 @@ waitpid(int pid, int *status, int options){
   bool found = false;
   
   acquire(&ptable.lock);
+<<<<<<< HEAD
   for(;;){
     // Scan through table looking for the process with the passed in PID
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if((p->pid==pid)&&(p->state == ZOMBIE)){
+=======
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
   	if(p->pid != pid)
         continue;
@@ -347,6 +352,7 @@ waitpid(int pid, int *status, int options){
   else {
   	for(;;){
       if(p->state == ZOMBIE){
+>>>>>>> 5e8d4b2a632da8e4ab4f9f0ab460345d78a00152
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -355,8 +361,10 @@ waitpid(int pid, int *status, int options){
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-	if(status != NULL)		// if we don't receive NULL as an arg
+	if(status != NULL){		// if we don't receive NULL as an arg
 	  *status= p->exitstatus;	// if we DO receive null the child exit status does nothing
+          printf(1,"status is set");
+        }
 	pidSeen=true;			// We saw the PID so we can set our flag
         release(&ptable.lock);
         return pid;
@@ -370,6 +378,7 @@ waitpid(int pid, int *status, int options){
 	  sleep(curproc, &ptable.lock);
     }
     if(pidSeen==false){
+      *status=-1;
       return -1;
     }
     
