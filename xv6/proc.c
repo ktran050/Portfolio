@@ -321,18 +321,32 @@ wait(int *status)
   }
 }
 
-int waitpid(int pid, int *status, int options){
+int 
+waitpid(int pid, int *status, int options){
   struct proc *p;
   struct proc *curproc = myproc();
-  bool pidSeen=false;
+  bool found = false;
   
   acquire(&ptable.lock);
-  for(;;){
-    // Scan through table looking for the process with the passed in PID
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->pid != pid)
-	continue;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+  	if(p->pid != pid)
+        continue;
+    else {
+    	found = true;
+    	break;
+	}
+  }
+  if(!found) {
+	release(&ptable.lock);
+	if(status != NULL)		// if we don't receive NULL as an arg
+		*status = -1;
+	return -1;
+  }
+  else {
+  	for(;;){
       if(p->state == ZOMBIE){
+        // Found one.
+        //pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -341,21 +355,14 @@ int waitpid(int pid, int *status, int options){
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-	if(status != NULL)		// if we don't receive NULL as an arg
-	  *status=p->exitstatus;	// if we DO receive null the child exit status does nothing
-	pidSeen=true;			// We saw the PID so we can set our flag
+		if(status != NULL)		// if we don't receive NULL as an arg
+			*status = p->exitstatus;	// if we DO receive null the child exit status does nothing
         release(&ptable.lock);
         return pid;
       }
     }
-    
-    if(pidSeen==false){
-	release(&ptable.lock);
-	return -1;
-    }
-    
-    // Wait for the process with the PID to exit
-    sleep(curproc, &ptable.lock);
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+    sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
 
