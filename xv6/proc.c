@@ -360,9 +360,14 @@ waitpid(int pid, int *status, int options){
         release(&ptable.lock);
         return pid;
       }
+      else if (p->state == UNUSED) {
+        if (status != NULL)
+          *status = p->exitstatus;
+        release(&ptable.lock);
+        return(pid);
+	  }
+	  sleep(curproc, &ptable.lock);
     }
-    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
-    sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
 
