@@ -357,7 +357,6 @@ waitpid(int pid, int *status, int options){
         p->state = UNUSED;
 	if(status != NULL)		// if we don't receive NULL as an arg
 	  *status= p->exitstatus;	// if we DO receive null the child exit status does nothing
-	pidSeen=true;			// We saw the PID so we can set our flag
         release(&ptable.lock);
         return pid;
       }
@@ -369,13 +368,11 @@ waitpid(int pid, int *status, int options){
 	  }
 	  sleep(curproc, &ptable.lock);
     }
-    if(pidSeen==false){
-      return -1;
-    }
     
     // Wait for the process with the PID to exit
     sleep(curproc, &ptable.lock);
   }
+}
 }
 
 //PAGEBREAK: 42

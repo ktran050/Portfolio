@@ -42,13 +42,6 @@ sys_waitpid(void)
   return waitpid(pid, status, options);
 }
 
-void sys_prioritySet(void)
-{
-  int priorityVal;
-  argint(0,&priorityVal);
-  prioritySet(priorityVal);
-}
-
 int
 sys_kill(void)
 {
