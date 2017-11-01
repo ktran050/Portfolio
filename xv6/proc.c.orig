@@ -328,6 +328,7 @@ waitpid(int pid, int *status, int options){
   bool found = false;
   
   acquire(&ptable.lock);
+<<<<<<< HEAD
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
   	if(p->pid != pid)
         continue;
@@ -344,7 +345,15 @@ waitpid(int pid, int *status, int options){
   }
   else {
   	for(;;){
+=======
+  for(;;){
+    // Scan through table looking for the process with the passed in PID
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->pid != pid){
+>>>>>>> 54b0f7586cae4aa8d411da55ea17dd2454546906
       if(p->state == ZOMBIE){
+        // Found one.
+        //pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -353,9 +362,14 @@ waitpid(int pid, int *status, int options){
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+<<<<<<< HEAD
+		if(status != NULL)		// if we don't receive NULL as an arg
+			*status = p->exitstatus;	// if we DO receive null the child exit status does nothing
+=======
 	if(status != NULL)		// if we don't receive NULL as an arg
 	  *status= p->exitstatus;	// if we DO receive null the child exit status does nothing
 	pidSeen=true;			// We saw the PID so we can set our flag
+>>>>>>> 54b0f7586cae4aa8d411da55ea17dd2454546906
         release(&ptable.lock);
         return pid;
       }
@@ -367,6 +381,8 @@ waitpid(int pid, int *status, int options){
 	  }
 	  sleep(curproc, &ptable.lock);
     }
+<<<<<<< HEAD
+=======
     }
 
     if(pidSeen==false){
@@ -375,7 +391,12 @@ waitpid(int pid, int *status, int options){
     
     // Wait for the process with the PID to exit
     sleep(curproc, &ptable.lock);
+>>>>>>> 54b0f7586cae4aa8d411da55ea17dd2454546906
   }
+}
+
+void prioritySet(int priorityVal){
+  return;
 }
 
 //PAGEBREAK: 42
