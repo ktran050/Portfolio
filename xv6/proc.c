@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "stdio.h"
 
 struct {
   struct spinlock lock;
@@ -330,8 +331,7 @@ int waitpid(int pid, int *status, int options){
   for(;;){
     // Scan through table looking for the process with the passed in PID
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->pid != pid){
-      if(p->state == ZOMBIE){
+      if((p->pid==pid)&&(p->state == ZOMBIE)){
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -340,16 +340,17 @@ int waitpid(int pid, int *status, int options){
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-	if(status != NULL)		// if we don't receive NULL as an arg
+	if(status != NULL){		// if we don't receive NULL as an arg
 	  *status= p->exitstatus;	// if we DO receive null the child exit status does nothing
+          printf(1,"status is set");
+        }
 	pidSeen=true;			// We saw the PID so we can set our flag
         release(&ptable.lock);
         return pid;
       }
     }
-    }
-
     if(pidSeen==false){
+      *status=-1;
       return -1;
     }
     
