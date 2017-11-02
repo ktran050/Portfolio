@@ -174,7 +174,7 @@ growproc(int n)
   return 0;
 }
 
-// Create a new process copying p as the parent.
+// Create a new /process copying p as the parent.
 // Sets up stack to return as if from system call.
 // Caller must set state of returned proc to RUNNABLE.
 int
@@ -232,7 +232,7 @@ exit(int status)
   int fd;
 
   if(curproc == initproc){
-    curproc->exitstatus=-1;
+   // curproc->exitstatus=-1;
     panic("init exiting");
   }
 
@@ -269,7 +269,7 @@ exit(int status)
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
   sched();
-  curproc->exitstatus=-1;
+//  curproc->exitstatus=-1;
   panic("zombie exit");
 }
 
@@ -328,8 +328,6 @@ waitpid(int pid, int *status, int options){
   bool found = false;
   
   acquire(&ptable.lock);
-  for(;;){
-    // Scan through table looking for the process with the passed in PID
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
   	if(p->pid != pid)
         continue;
@@ -340,13 +338,15 @@ waitpid(int pid, int *status, int options){
   }
   if(!found) {
 	release(&ptable.lock);
-	if(status != NULL)		// if we don't receive NULL as an arg
+	if(!status)		// if we don't receive NULL as an arg
 		*status = -1;
 	return -1;
   }
   else {
   	for(;;){
       if(p->state == ZOMBIE){
+        // Found one.
+        //pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -355,8 +355,12 @@ waitpid(int pid, int *status, int options){
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-	if(status != NULL)		// if we don't receive NULL as an arg
-	  *status= p->exitstatus;	// if we DO receive null the child exit status does nothing
+//	cprintf("\n")；
+		if(status != NULL)
+			// if we don't receive NULL as an arg 
+                	*status = p->exitstatus;
+			
+	// if we DO receive null the child exit status does nothing
         release(&ptable.lock);
         return pid;
       }
@@ -368,11 +372,7 @@ waitpid(int pid, int *status, int options){
 	  }
 	  sleep(curproc, &ptable.lock);
     }
-    
-    // Wait for the process with the PID to exit
-    sleep(curproc, &ptable.lock);
   }
-}
 }
 
 //PAGEBREAK: 42
@@ -383,7 +383,6 @@ waitpid(int pid, int *status, int options){
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-
 void
 scheduler(void)
 {

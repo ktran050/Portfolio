@@ -72,6 +72,7 @@ int waitPid(void){
      
       
       printf(1, "\n The is child with PID# %d and I will exit with status %d\n", getpid(), 0);
+
       exit(0);}}
        
       sleep(5);
