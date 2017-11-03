@@ -37,9 +37,16 @@ sys_waitpid(void)
   int *status;
   int options;
   argint(0,&pid);
-  argptr(0,(char**) &status, sizeof(int*));
-  argint(0,&options);
+  argptr(1,(char**) &status, sizeof(int*));
+  argint(2,&options);
   return waitpid(pid, status, options);
+}
+
+int sys_pset(void)
+{
+  int pVal;
+  argint(0,&pVal);
+  return pset(pVal);
 }
 
 int
