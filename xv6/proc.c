@@ -329,18 +329,19 @@ waitpid(int pid, int *status, int options){
   
   acquire(&ptable.lock);
   for(;;){
+
     // Scan through table looking for the process with the passed in PID
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-  	if(p->pid != pid)
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+      if(p->pid != pid)
         continue;
-    else {
+      else {
     	found = true;
     	break;
-	}
-  }
-  if(!found) {
-	release(&ptable.lock);
-	if(status != NULL)		// if we don't receive NULL as an arg
+      }
+    }  
+    if(!found) {
+      release(&ptable.lock);
+      if(status != NULL)		// if we don't receive NULL as an arg
 		*status = -1;
 	return -1;
   }
