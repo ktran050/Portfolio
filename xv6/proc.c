@@ -376,6 +376,14 @@ waitpid(int pid, int *status, int options){
 }
 
 int pset(int pVal){
+  struct proc *curproc=myproc();
+  
+  if(pVal<0)
+    curproc->pVal=0;
+  else if(pVal>0)
+    curproc->pVal=63;
+  else
+    curproc->pVal=pVal;
 
   return 0;
 }
