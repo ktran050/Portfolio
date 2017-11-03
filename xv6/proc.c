@@ -88,6 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->pVal = 20;
 
   release(&ptable.lock);
 
@@ -411,14 +412,15 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+
+
     h=ptable.proc;
 
       // Find a baseline value
       for(i = ptable.proc; i < &ptable.proc[NPROC]; i++){
         if(i->state == RUNNABLE){
           h = i;
-          i = &ptable.proc[NPROC];
+          break;
         }
       }
 
@@ -428,19 +430,25 @@ scheduler(void)
           h = i;
       }
 
+
+
+
+
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+
       if(p != h)
         continue;
       if(h->state != RUNNABLE)
-        continue;
+        break;
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      c->proc = h;
-      switchuvm(h);
-      h->state = RUNNING;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
 
-      swtch(&(c->scheduler), h->context);
+      swtch(&(c->scheduler), p->context);
       switchkvm();
 
       // Process is done running for now.
