@@ -2,6 +2,9 @@
 // Inputs: int day, month, year
 // Outputs: Error messages or day of the week (ex. Monday, Wednesday)
 #include <string>
+#include "isLeapYear.h"
+#ifndef DAYOFTHEWEEK_H
+#define DAYOFTHEWEEK_H
 
 std::string dayOfTheWeek(int day,int month, int year){ 
   const int daysPerMonth[]={31,28,31,30,31,30,31,31,30,31,30,31};
@@ -17,19 +20,19 @@ std::string dayOfTheWeek(int day,int month, int year){
 
   // Calculate number of days apart from genesis based on year
   daysApart=(year-2001)*365;
-  for(unsigned i=0;i<month-1;++i){
+  for(int i=0;i<month-1;++i){
     daysApart+=daysPerMonth[i];
   }
   daysApart+=day-1;
 
   // Add days from leap years for future dates
-  for(unsigned i=2001;i<year;++i){
+  for(int i=2001;i<year;++i){
     if(isLeapYear(i))
       ++daysApart;
   }
 
   // Subtract days from leap years for past dates
-  for(unsigned i=year;i<2000;++i){
+  for(int i=year;i<2000;++i){
     if(isLeapYear(i))
       --daysApart;
   }
@@ -60,3 +63,5 @@ std::string dayOfTheWeek(int day,int month, int year){
   }
   return "Error: daysApart went out of bounds"; 	// if this point is reached ten daysApart%7 went out of bounds {-6,6}
 }
+
+#endif
