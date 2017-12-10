@@ -50,11 +50,14 @@ int shm_open(int id, char **pointer) {
       // mark the id as seen
       shm_pg_seen = true;
 
+      //grab the physical address of the page
+//      mem=shm_table.shm_pages[i].frame;
+
       // map virtual addresses to physical addresses (use mappages)
-      mappages(curproc->pgdir, (char*)(curproc->sz), PGSIZE, V2P(mem), PTE_W|PTE_U);
+      mappages(curproc->pgdir, (char*)(PGROUNDUP(curproc->sz)), PGSIZE, V2P(mem), PTE_W|PTE_U);
       
       // return virtual address using pointer
-      *pointer=(char *)(curproc->sz);
+      *pointer=(char *)(PGROUNDUP(curproc->sz));
       release(&(shm_table.lock));
       return 0; 
     }
@@ -74,13 +77,14 @@ int shm_open(int id, char **pointer) {
         mem=kalloc();	// allocate the page
         shm_table.shm_pages[i].frame=mem;
         // map the page
-        mappages(curproc->pgdir, (char*)(curproc->sz), PGSIZE, V2P(mem), PTE_W|PTE_U);
+        mappages(curproc->pgdir, (char*)(PGROUNDUP(curproc->sz)), PGSIZE, V2P(mem), PTE_W|PTE_U);
  
         // return virtual address using pointer
-        *pointer=(char *)(curproc->sz);
         curproc->sz=+PGSIZE;
-       release(&(shm_table.lock));
-       return 0; 
+        *pointer=(char *)(PGROUNDUP(curproc->sz));
+        curproc->sz=+PGSIZE;
+        release(&(shm_table.lock));
+        return 0; 
       }  
     }
 
