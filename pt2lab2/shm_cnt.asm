@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
     1000:	55                   	push   %ebp
     1001:	89 e5                	mov    %esp,%ebp
     1003:	57                   	push   %edi
+//which we can now use but will be shared between the two processes
   
 shm_open(1,(char **)&counter);
-
- 
+//printf(1,"I reached past open\n"); 
 //  printf(1,"%s returned successfully from shm_open with counter %x\n", pid? "Child": "Parent", counter); 
   for(i = 0; i < 10000; i++)
     1004:	31 ff                	xor    %edi,%edi
@@ -29,9 +29,9 @@ int main(int argc, char *argv[])
 {
     1006:	56                   	push   %esi
     1007:	53                   	push   %ebx
-     uacquire(&(counter->lock));
-     counter->cnt++;
+//     printf(1,"three\n");
      urelease(&(counter->lock));
+//     printf(1,"four\n");
 
 //print something because we are curious and to give a chance to switch process
      if(i%1000 == 0)
@@ -71,21 +71,24 @@ shm_open(1,(char **)&counter);
     102e:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     1035:	e8 98 03 00 00       	call   13d2 <shm_open>
     103a:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
-
- 
+//printf(1,"I reached past open\n"); 
 //  printf(1,"%s returned successfully from shm_open with counter %x\n", pid? "Child": "Parent", counter); 
   for(i = 0; i < 10000; i++)
     {
+//     printf(1,"one\n");
      uacquire(&(counter->lock));
     1040:	8b 44 24 2c          	mov    0x2c(%esp),%eax
     1044:	89 04 24             	mov    %eax,(%esp)
     1047:	e8 b4 07 00 00       	call   1800 <uacquire>
+//     printf(1,"two\n");
      counter->cnt++;
     104c:	8b 44 24 2c          	mov    0x2c(%esp),%eax
     1050:	83 40 04 01          	addl   $0x1,0x4(%eax)
+//     printf(1,"three\n");
      urelease(&(counter->lock));
     1054:	89 04 24             	mov    %eax,(%esp)
     1057:	e8 c4 07 00 00       	call   1820 <urelease>
+//     printf(1,"four\n");
 
 //print something because we are curious and to give a chance to switch process
      if(i%1000 == 0)
@@ -114,10 +117,10 @@ shm_open(1,(char **)&counter);
     10a5:	89 44 24 08          	mov    %eax,0x8(%esp)
     10a9:	89 4c 24 0c          	mov    %ecx,0xc(%esp)
     10ad:	e8 de 03 00 00       	call   1490 <printf>
+//which we can now use but will be shared between the two processes
   
 shm_open(1,(char **)&counter);
-
- 
+//printf(1,"I reached past open\n"); 
 //  printf(1,"%s returned successfully from shm_open with counter %x\n", pid? "Child": "Parent", counter); 
   for(i = 0; i < 10000; i++)
     10b2:	83 c7 01             	add    $0x1,%edi
@@ -125,7 +128,7 @@ shm_open(1,(char **)&counter);
     10bb:	75 83                	jne    1040 <main+0x40>
        printf(1,"Counter in %s is %d at address %x\n",pid? "Parent" : "Child", counter->cnt, counter);
 }
-  
+//printf(1, "I got past the for loop\n"); 
   if(pid)
      {
        printf(1,"Counter in parent is %d\n",counter->cnt);
@@ -134,7 +137,7 @@ shm_open(1,(char **)&counter);
      if(i%1000 == 0)
        printf(1,"Counter in %s is %d at address %x\n",pid? "Parent" : "Child", counter->cnt, counter);
 }
-  
+//printf(1, "I got past the for loop\n"); 
   if(pid)
     10c1:	85 f6                	test   %esi,%esi
      {
@@ -145,7 +148,7 @@ shm_open(1,(char **)&counter);
      if(i%1000 == 0)
        printf(1,"Counter in %s is %d at address %x\n",pid? "Parent" : "Child", counter->cnt, counter);
 }
-  
+//printf(1, "I got past the for loop\n"); 
   if(pid)
     10ca:	74 2a                	je     10f6 <main+0xf6>
      {
@@ -160,9 +163,11 @@ shm_open(1,(char **)&counter);
     printf(1,"Counter in child is %d\n\n",counter->cnt);
 
 //shm_close: first process will just detach, next one will free up the shm_table entry (but for now not the page)
+//   printf(1,"I got to close\n");
    shm_close(1);
     10e5:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     10ec:	e8 e9 02 00 00       	call   13da <shm_close>
+//   printf(1,"I reached past close\n");
    exit();
     10f1:	e8 3c 02 00 00       	call   1332 <exit>
   if(pid)

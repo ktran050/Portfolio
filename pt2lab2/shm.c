@@ -6,7 +6,6 @@
 #include "mmu.h"
 #include "proc.h"
 #include "spinlock.h"
-#include <stdbool.h>
 
 struct {
   struct spinlock lock;
@@ -29,98 +28,80 @@ void shminit() {
   release(&(shm_table.lock));
 }
 
-int shm_open(int id, char **pointer) { 
-  struct proc *curproc = myproc();
-  bool shm_pg_seen = false;
-  int i;
+int shm_open(int id, char **pointer) {
+  uint pageSeen=0;	// flag that an id has been seen
+  struct proc *curproc=myproc();
   char *mem;
-  
-  initlock(&(shm_table.lock), "SHM lock");
+  int i;
+
+  // Loop through the table
   acquire(&(shm_table.lock));
-
-  // look through shm_table
-  for(i = 0; i< 64; i++){
-
-    // if (seg id)
-    if(shm_table.shm_pages[i].id == id){
-
-      // ref count++
+  for(i = 0; i < 64; i++){
+    if(shm_table.shm_pages[i].id==id){
+      // Set flag
+      pageSeen=1;
+      // Increment counter
       shm_table.shm_pages[i].refcnt++;
-
-      // mark the id as seen
-      shm_pg_seen = true;
-
-      //grab the physical address of the page
-//      mem=shm_table.shm_pages[i].frame;
-
-      // map virtual addresses to physical addresses (use mappages)
-      mappages(curproc->pgdir, (char*)(PGROUNDUP(curproc->sz)), PGSIZE, V2P(mem), PTE_W|PTE_U);
-      
-      // return virtual address using pointer
-      *pointer=(char *)(PGROUNDUP(curproc->sz));
+      // Map the page
+      mem=shm_table.shm_pages[i].frame;
+      mappages(curproc->pgdir, (void *)(PGROUNDUP(curproc->sz)), PGSIZE, V2P(mem), PTE_W|PTE_U);
+      // Return pointer to virtual address
+      *pointer=(char *)(curproc->sz);
+      // Update size to reflect changes
+      curproc->sz+=PGSIZE;
+      // Release lock
       release(&(shm_table.lock));
-      return 0; 
+      // Execution complete
+      return 0;
     }
   }
-  release(&(shm_table.lock));
-
-  // if the seg id doesn't exist yet
-  if(shm_pg_seen == false){
-    // grab lock
-    acquire(&(shm_table.lock));
-
-    // store page in shm_table
-    for(i = 0; i< 64; ++i){
-      if(shm_table.shm_pages[i].id==0){
-        shm_table.shm_pages[i].id = id;	// set id
-        shm_table.shm_pages[i].refcnt=1;  // set reference count
-        mem=kalloc();	// allocate the page
-        shm_table.shm_pages[i].frame=mem;
-        // map the page
-        mappages(curproc->pgdir, (char*)(PGROUNDUP(curproc->sz)), PGSIZE, V2P(mem), PTE_W|PTE_U);
- 
-        // return virtual address using pointer
-        curproc->sz=+PGSIZE;
-        *pointer=(char *)(PGROUNDUP(curproc->sz));
-        curproc->sz=+PGSIZE;
-        release(&(shm_table.lock));
-        return 0; 
-      }  
-    }
-
-    // release lock
-    release(&(shm_table.lock));
-  }
-}
-
-int shm_close(int id) {
-  int i, a;
-
-  initlock(&(shm_table.lock), "SHM lock");
-  acquire(&(shm_table.lock));
-
-  // look through shm_table
-  for(i = 0; i< 64; i++){
-
-    // if (seg_id){
-    if(shm_table.shm_pages[i].id == id){
   
-      // refcount --
-      shm_table.shm_pages[i].refcnt--;
-
-      // if refcount ==0
-      if(!shm_table.shm_pages[i].refcnt){
-
-        // clear table 
-        for (a = 0; a< 64; a++) {
-          shm_table.shm_pages[i].id =0;
-          shm_table.shm_pages[i].frame =0;
-          shm_table.shm_pages[i].refcnt =0;
-        }   
+  // case id not found
+  if(pageSeen==0){
+    // Loop through the table for the next available entry
+    for(i=0; i < 64; i++){
+      if(shm_table.shm_pages[i].id==0){
+        // Set id
+        shm_table.shm_pages[i].id=id;
+	// Allocate a page
+	mem=kalloc();
+        // Set frame
+        shm_table.shm_pages[i].frame=mem;
+        memset(shm_table.shm_pages[i].frame, 0, PGSIZE);
+        // Increment page count
+        shm_table.shm_pages[i].refcnt=1;
+        // Map the page
+        mappages(curproc->pgdir, (void *)(PGROUNDUP(curproc->sz)), PGSIZE, V2P(mem), PTE_W|PTE_U);
+        // Return pointer to virtual address
+        *pointer=(char *)(curproc->sz);
+        // Increment the size
+        curproc->sz+=PGSIZE;
         break;
       }
-    }  
+    }
+  }
+  // Release lock
+  release(&(shm_table.lock));
+  return 0; //added to remove compiler warning -- you should decide what to return
+}
+
+
+int shm_close(int id) {
+  int i;
+
+  acquire(&(shm_table.lock));
+  // Loop through the table looking for the id
+  for(i=0; i <64; i++){
+    if(shm_table.shm_pages[i].id==id){
+      // Decrease reference count
+      shm_table.shm_pages[i].refcnt--;
+      // if refcnt is now empty clear the entry
+      if(shm_table.shm_pages[i].refcnt==0){
+        shm_table.shm_pages[i].id=0;
+        shm_table.shm_pages[i].frame=0;	// refcount is already 0; no need to set it again
+      }
+    }
   }
   release(&(shm_table.lock));
-return 0; //added to remove compiler warning -- you should decide what to return
+  return 0; //added to remove compiler warning -- you should decide what to return
 }

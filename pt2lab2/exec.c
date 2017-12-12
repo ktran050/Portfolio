@@ -12,8 +12,8 @@ exec(char *path, char **argv)
 {
   char *s, *last;
   int i, off;
-  uint argc, sz, sp, ustack[3+MAXARG+1];	//ustack defines the stack here. Size is [3+MAXARG+1]
-  struct elfhdr elf;				//Maxarg is defined as 32
+  uint argc, sz, sp, ustack[3+MAXARG+1];
+  struct elfhdr elf;
   struct inode *ip;
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
