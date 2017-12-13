@@ -63,10 +63,10 @@ exec(char *path, char **argv)
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
   sz = PGROUNDUP(sz);
-  if((sz = allocuvm(pgdir, KERNBASE-PGSIZE-1, KERNBASE-PGSIZE)) == 0)
+  if((sz = allocuvm(pgdir, KERNBASE-4-PGSIZE, KERNBASE-5)) == 0)
     goto bad;
-//  clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
-  sp = KERNBASE-1;
+//  clearpteu(pgdir, (char*)(sz - 2*PGSIZE));  unncessary now
+  sp = KERNBASE-4;
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {
@@ -92,6 +92,9 @@ exec(char *path, char **argv)
     if(*s == '/')
       last = s+1;
   safestrcpy(curproc->name, last, sizeof(curproc->name));
+  
+  // Set the default stacksize
+  curproc->stacksz=1;
 
   // Commit to the user image.
   oldpgdir = curproc->pgdir;
