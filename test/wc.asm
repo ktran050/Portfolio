@@ -96,7 +96,7 @@ main(int argc, char *argv[])
     if((fd = open(argv[i], 0)) < 0){
       printf(1, "wc: cannot open %s\n", argv[i]);
     105e:	8b 03                	mov    (%ebx),%eax
-    1060:	c7 44 24 04 d6 18 00 	movl   $0x18d6,0x4(%esp)
+    1060:	c7 44 24 04 d4 18 00 	movl   $0x18d4,0x4(%esp)
     1067:	00 
     1068:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     106f:	89 44 24 08          	mov    %eax,0x8(%esp)
@@ -109,7 +109,7 @@ main(int argc, char *argv[])
 
   if(argc <= 1){
     wc(0, "");
-    107d:	c7 44 24 04 c8 18 00 	movl   $0x18c8,0x4(%esp)
+    107d:	c7 44 24 04 c6 18 00 	movl   $0x18c6,0x4(%esp)
     1084:	00 
     1085:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
     108c:	e8 0f 00 00 00       	call   10a0 <wc>
@@ -202,7 +202,7 @@ wc(int fd, char *name)
         l++;
     10f9:	31 c9                	xor    %ecx,%ecx
       if(strchr(" \r\t\n\v", buf[i]))
-    10fb:	c7 04 24 b3 18 00 00 	movl   $0x18b3,(%esp)
+    10fb:	c7 04 24 b1 18 00 00 	movl   $0x18b1,(%esp)
   inword = 0;
   while((n = read(fd, buf, sizeof(buf))) > 0){
     for(i=0; i<n; i++){
@@ -270,7 +270,7 @@ wc(int fd, char *name)
   printf(1, "%d %d %d %s\n", l, w, c, name);
     1139:	8b 45 0c             	mov    0xc(%ebp),%eax
     113c:	89 5c 24 08          	mov    %ebx,0x8(%esp)
-    1140:	c7 44 24 04 c9 18 00 	movl   $0x18c9,0x4(%esp)
+    1140:	c7 44 24 04 c7 18 00 	movl   $0x18c7,0x4(%esp)
     1147:	00 
     1148:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     114f:	89 44 24 14          	mov    %eax,0x14(%esp)
@@ -292,7 +292,7 @@ wc(int fd, char *name)
   }
   if(n < 0){
     printf(1, "wc: read error\n");
-    116e:	c7 44 24 04 b9 18 00 	movl   $0x18b9,0x4(%esp)
+    116e:	c7 44 24 04 b7 18 00 	movl   $0x18b7,0x4(%esp)
     1175:	00 
     1176:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     117d:	e8 8e 03 00 00       	call   1510 <printf>
@@ -1000,7 +1000,7 @@ printint(int fd, int xx, int base, int sgn)
     14a2:	31 d2                	xor    %edx,%edx
     14a4:	f7 f6                	div    %esi
     14a6:	8d 4f 01             	lea    0x1(%edi),%ecx
-    14a9:	0f b6 92 f1 18 00 00 	movzbl 0x18f1(%edx),%edx
+    14a9:	0f b6 92 ef 18 00 00 	movzbl 0x18ef(%edx),%edx
   }while((x /= base) != 0);
     14b0:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1365,7 +1365,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    1641:	b8 ea 18 00 00       	mov    $0x18ea,%eax
+    1641:	b8 e8 18 00 00       	mov    $0x18e8,%eax
     1646:	85 ff                	test   %edi,%edi
     1648:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1901,10 +1901,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1899:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1899:	0f ae f0             	mfence 
 }
-    189e:	5d                   	pop    %ebp
-    189f:	c3                   	ret    
+    189c:	5d                   	pop    %ebp
+    189d:	c3                   	ret    
+    189e:	66 90                	xchg   %ax,%ax
 
 000018a0 <urelease>:
 
@@ -1913,13 +1914,13 @@ void urelease (struct uspinlock *lk) {
     18a1:	89 e5                	mov    %esp,%ebp
     18a3:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    18a6:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    18a6:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    18ab:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    18a9:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    18b1:	5d                   	pop    %ebp
-    18b2:	c3                   	ret    
+    18af:	5d                   	pop    %ebp
+    18b0:	c3                   	ret    

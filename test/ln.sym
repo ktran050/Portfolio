@@ -1,7 +1,7 @@
 00001000 .text
-00001793 .rodata
-000017d4 .eh_frame
-00001a78 .bss
+00001791 .rodata
+000017d0 .eh_frame
+00001a74 .bss
 00000000 .comment
 00000000 .debug_aranges
 00000000 .debug_info
@@ -14,12 +14,11 @@
 00000000 ulib.c
 00000000 printf.c
 00001350 printint
-000017c1 digits.1035
+000017bf digits.1359
 00000000 umalloc.c
-00001a78 freep
-00001a7c base
+00001a74 freep
+00001a78 base
 00000000 uspinlock.c
-00000000 
 00001070 strcpy
 000013f0 printf
 00001260 memmove
@@ -43,14 +42,14 @@
 0000131a sbrk
 0000133a shm_close
 0000132a uptime
-00001a78 __bss_start
+00001a74 __bss_start
 00001120 memset
 00001000 main
 000010a0 strcmp
 0000130a dup
 000011e0 stat
-00001a78 _edata
-00001a84 _end
+00001a74 _edata
+00001a80 _end
 000012f2 link
 00001292 exit
 00001230 atoi

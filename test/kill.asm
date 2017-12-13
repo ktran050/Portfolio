@@ -71,7 +71,7 @@ main(int argc, char **argv)
 
   if(argc < 2){
     printf(2, "usage: kill pid...\n");
-    103f:	c7 44 24 04 83 17 00 	movl   $0x1783,0x4(%esp)
+    103f:	c7 44 24 04 81 17 00 	movl   $0x1781,0x4(%esp)
     1046:	00 
     1047:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
     104e:	e8 8d 03 00 00       	call   13e0 <printf>
@@ -778,7 +778,7 @@ printint(int fd, int xx, int base, int sgn)
     1372:	31 d2                	xor    %edx,%edx
     1374:	f7 f6                	div    %esi
     1376:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1379:	0f b6 92 9e 17 00 00 	movzbl 0x179e(%edx),%edx
+    1379:	0f b6 92 9c 17 00 00 	movzbl 0x179c(%edx),%edx
   }while((x /= base) != 0);
     1380:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1143,7 +1143,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    1511:	b8 97 17 00 00       	mov    $0x1797,%eax
+    1511:	b8 95 17 00 00       	mov    $0x1795,%eax
     1516:	85 ff                	test   %edi,%edi
     1518:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1679,10 +1679,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1769:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1769:	0f ae f0             	mfence 
 }
-    176e:	5d                   	pop    %ebp
-    176f:	c3                   	ret    
+    176c:	5d                   	pop    %ebp
+    176d:	c3                   	ret    
+    176e:	66 90                	xchg   %ax,%ax
 
 00001770 <urelease>:
 
@@ -1691,13 +1692,13 @@ void urelease (struct uspinlock *lk) {
     1771:	89 e5                	mov    %esp,%ebp
     1773:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1776:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1776:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    177b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1779:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    1781:	5d                   	pop    %ebp
-    1782:	c3                   	ret    
+    177f:	5d                   	pop    %ebp
+    1780:	c3                   	ret    

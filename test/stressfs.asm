@@ -45,7 +45,7 @@ main(int argc, char *argv[])
   char data[512];
 
   printf(1, "stressfs starting\n");
-    1016:	c7 44 24 04 63 18 00 	movl   $0x1863,0x4(%esp)
+    1016:	c7 44 24 04 61 18 00 	movl   $0x1861,0x4(%esp)
     101d:	00 
   memset(data, 'a', sizeof(data));
     101e:	8d 74 24 20          	lea    0x20(%esp),%esi
@@ -109,7 +109,7 @@ main(int argc, char *argv[])
       break;
 
   printf(1, "write %d\n", i);
-    107e:	c7 44 24 04 76 18 00 	movl   $0x1876,0x4(%esp)
+    107e:	c7 44 24 04 74 18 00 	movl   $0x1874,0x4(%esp)
     1085:	00 
     1086:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     108d:	e8 2e 04 00 00       	call   14c0 <printf>
@@ -159,7 +159,7 @@ main(int argc, char *argv[])
     10d1:	e8 b4 02 00 00       	call   138a <close>
 
   printf(1, "read\n");
-    10d6:	c7 44 24 04 80 18 00 	movl   $0x1880,0x4(%esp)
+    10d6:	c7 44 24 04 7e 18 00 	movl   $0x187e,0x4(%esp)
     10dd:	00 
     10de:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     10e5:	e8 d6 03 00 00       	call   14c0 <printf>
@@ -902,7 +902,7 @@ printint(int fd, int xx, int base, int sgn)
     1452:	31 d2                	xor    %edx,%edx
     1454:	f7 f6                	div    %esi
     1456:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1459:	0f b6 92 8d 18 00 00 	movzbl 0x188d(%edx),%edx
+    1459:	0f b6 92 8b 18 00 00 	movzbl 0x188b(%edx),%edx
   }while((x /= base) != 0);
     1460:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1267,7 +1267,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    15f1:	b8 86 18 00 00       	mov    $0x1886,%eax
+    15f1:	b8 84 18 00 00       	mov    $0x1884,%eax
     15f6:	85 ff                	test   %edi,%edi
     15f8:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1444,7 +1444,7 @@ free(void *ap)
 
   bp = (Header*)ap - 1;
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
-    16b1:	a1 48 1b 00 00       	mov    0x1b48,%eax
+    16b1:	a1 44 1b 00 00       	mov    0x1b44,%eax
 static Header base;
 static Header *freep;
 
@@ -1522,7 +1522,7 @@ free(void *ap)
     p->s.ptr = bp;
     16f7:	89 10                	mov    %edx,(%eax)
   freep = p;
-    16f9:	a3 48 1b 00 00       	mov    %eax,0x1b48
+    16f9:	a3 44 1b 00 00       	mov    %eax,0x1b44
 }
     16fe:	5b                   	pop    %ebx
     16ff:	5e                   	pop    %esi
@@ -1556,7 +1556,7 @@ free(void *ap)
   } else
     p->s.ptr = bp;
   freep = p;
-    1722:	a3 48 1b 00 00       	mov    %eax,0x1b48
+    1722:	a3 44 1b 00 00       	mov    %eax,0x1b44
     bp->s.size += p->s.ptr->s.size;
     bp->s.ptr = p->s.ptr->s.ptr;
   } else
@@ -1598,7 +1598,7 @@ malloc(uint nbytes)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
     1749:	8b 45 08             	mov    0x8(%ebp),%eax
   if((prevp = freep) == 0){
-    174c:	8b 1d 48 1b 00 00    	mov    0x1b48,%ebx
+    174c:	8b 1d 44 1b 00 00    	mov    0x1b44,%ebx
 malloc(uint nbytes)
 {
   Header *p, *prevp;
@@ -1656,7 +1656,7 @@ morecore(uint nu)
       return (void*)(p + 1);
     }
     if(p == freep)
-    178b:	3b 15 48 1b 00 00    	cmp    0x1b48,%edx
+    178b:	3b 15 44 1b 00 00    	cmp    0x1b44,%edx
     1791:	75 ed                	jne    1780 <malloc+0x40>
 morecore(uint nu)
 {
@@ -1685,7 +1685,7 @@ morecore(uint nu)
     17ba:	89 04 24             	mov    %eax,(%esp)
     17bd:	e8 ee fe ff ff       	call   16b0 <free>
   return freep;
-    17c2:	8b 15 48 1b 00 00    	mov    0x1b48,%edx
+    17c2:	8b 15 44 1b 00 00    	mov    0x1b44,%edx
       }
       freep = prevp;
       return (void*)(p + 1);
@@ -1720,7 +1720,7 @@ morecore(uint nu)
     17e4:	89 70 04             	mov    %esi,0x4(%eax)
       }
       freep = prevp;
-    17e7:	89 15 48 1b 00 00    	mov    %edx,0x1b48
+    17e7:	89 15 44 1b 00 00    	mov    %edx,0x1b44
       return (void*)(p + 1);
     17ed:	83 c0 08             	add    $0x8,%eax
     }
@@ -1750,20 +1750,20 @@ morecore(uint nu)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
-    17fe:	c7 05 48 1b 00 00 4c 	movl   $0x1b4c,0x1b48
+    17fe:	c7 05 44 1b 00 00 48 	movl   $0x1b48,0x1b44
     1805:	1b 00 00 
     base.s.size = 0;
-    1808:	ba 4c 1b 00 00       	mov    $0x1b4c,%edx
+    1808:	ba 48 1b 00 00       	mov    $0x1b48,%edx
   Header *p, *prevp;
   uint nunits;
 
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
-    180d:	c7 05 4c 1b 00 00 4c 	movl   $0x1b4c,0x1b4c
+    180d:	c7 05 48 1b 00 00 48 	movl   $0x1b48,0x1b48
     1814:	1b 00 00 
     base.s.size = 0;
-    1817:	c7 05 50 1b 00 00 00 	movl   $0x0,0x1b50
+    1817:	c7 05 4c 1b 00 00 00 	movl   $0x0,0x1b4c
     181e:	00 00 00 
     1821:	e9 46 ff ff ff       	jmp    176c <malloc+0x2c>
     1826:	66 90                	xchg   %ax,%ax
@@ -1803,10 +1803,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1849:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1849:	0f ae f0             	mfence 
 }
-    184e:	5d                   	pop    %ebp
-    184f:	c3                   	ret    
+    184c:	5d                   	pop    %ebp
+    184d:	c3                   	ret    
+    184e:	66 90                	xchg   %ax,%ax
 
 00001850 <urelease>:
 
@@ -1815,13 +1816,13 @@ void urelease (struct uspinlock *lk) {
     1851:	89 e5                	mov    %esp,%ebp
     1853:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1856:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1856:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    185b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1859:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    1861:	5d                   	pop    %ebp
-    1862:	c3                   	ret    
+    185f:	5d                   	pop    %ebp
+    1860:	c3                   	ret    

@@ -11748,26 +11748,26 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-8010415c:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+8010415c:	0f ae f0             	mfence 
 
   // Record info about lock acquisition for debugging.
   lk->cpu = mycpu();
-80104161:	8b 5d 08             	mov    0x8(%ebp),%ebx
-80104164:	e8 87 f4 ff ff       	call   801035f0 <mycpu>
-80104169:	89 43 08             	mov    %eax,0x8(%ebx)
+8010415f:	8b 5d 08             	mov    0x8(%ebp),%ebx
+80104162:	e8 89 f4 ff ff       	call   801035f0 <mycpu>
+80104167:	89 43 08             	mov    %eax,0x8(%ebx)
   getcallerpcs(&lk, lk->pcs);
-8010416c:	8b 45 08             	mov    0x8(%ebp),%eax
-8010416f:	83 c0 0c             	add    $0xc,%eax
-80104172:	89 44 24 04          	mov    %eax,0x4(%esp)
-80104176:	8d 45 08             	lea    0x8(%ebp),%eax
-80104179:	89 04 24             	mov    %eax,(%esp)
-8010417c:	e8 df fe ff ff       	call   80104060 <getcallerpcs>
+8010416a:	8b 45 08             	mov    0x8(%ebp),%eax
+8010416d:	83 c0 0c             	add    $0xc,%eax
+80104170:	89 44 24 04          	mov    %eax,0x4(%esp)
+80104174:	8d 45 08             	lea    0x8(%ebp),%eax
+80104177:	89 04 24             	mov    %eax,(%esp)
+8010417a:	e8 e1 fe ff ff       	call   80104060 <getcallerpcs>
 }
-80104181:	83 c4 14             	add    $0x14,%esp
-80104184:	5b                   	pop    %ebx
-80104185:	5d                   	pop    %ebp
-80104186:	c3                   	ret    
-80104187:	90                   	nop
+8010417f:	83 c4 14             	add    $0x14,%esp
+80104182:	5b                   	pop    %ebx
+80104183:	5d                   	pop    %ebp
+80104184:	c3                   	ret    
+80104185:	8d 76 00             	lea    0x0(%esi),%esi
 
 // Check whether this cpu is holding the lock.
 int
@@ -11931,27 +11931,28 @@ release(struct spinlock *lk)
   // Both the C compiler and the hardware may re-order loads and
   // stores; __sync_synchronize() tells them both not to.
   __sync_synchronize();
-8010425a:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+8010425a:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-8010425f:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
+8010425d:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
 
   popcli();
 }
-80104265:	83 c4 10             	add    $0x10,%esp
-80104268:	5b                   	pop    %ebx
-80104269:	5e                   	pop    %esi
-8010426a:	5d                   	pop    %ebp
+80104263:	83 c4 10             	add    $0x10,%esp
+80104266:	5b                   	pop    %ebx
+80104267:	5e                   	pop    %esi
+80104268:	5d                   	pop    %ebp
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
 
   popcli();
-8010426b:	e9 40 ff ff ff       	jmp    801041b0 <popcli>
+80104269:	e9 42 ff ff ff       	jmp    801041b0 <popcli>
+8010426e:	66 90                	xchg   %ax,%ax
 
 80104270 <memset>:
 #include "types.h"

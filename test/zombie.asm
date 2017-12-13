@@ -728,7 +728,7 @@ printint(int fd, int xx, int base, int sgn)
     1342:	31 d2                	xor    %edx,%edx
     1344:	f7 f6                	div    %esi
     1346:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1349:	0f b6 92 5a 17 00 00 	movzbl 0x175a(%edx),%edx
+    1349:	0f b6 92 58 17 00 00 	movzbl 0x1758(%edx),%edx
   }while((x /= base) != 0);
     1350:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1093,7 +1093,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    14e1:	b8 53 17 00 00       	mov    $0x1753,%eax
+    14e1:	b8 51 17 00 00       	mov    $0x1751,%eax
     14e6:	85 ff                	test   %edi,%edi
     14e8:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1629,10 +1629,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1739:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1739:	0f ae f0             	mfence 
 }
-    173e:	5d                   	pop    %ebp
-    173f:	c3                   	ret    
+    173c:	5d                   	pop    %ebp
+    173d:	c3                   	ret    
+    173e:	66 90                	xchg   %ax,%ax
 
 00001740 <urelease>:
 
@@ -1641,13 +1642,13 @@ void urelease (struct uspinlock *lk) {
     1741:	89 e5                	mov    %esp,%ebp
     1743:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1746:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1746:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    174b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1749:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    1751:	5d                   	pop    %ebp
-    1752:	c3                   	ret    
+    174f:	5d                   	pop    %ebp
+    1750:	c3                   	ret    

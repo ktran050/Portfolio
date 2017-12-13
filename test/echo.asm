@@ -29,10 +29,10 @@ main(int argc, char *argv[])
     101c:	eb 26                	jmp    1044 <main+0x44>
     101e:	66 90                	xchg   %ax,%ax
     printf(1, "%s%s", argv[i], i+1 < argc ? " " : "\n");
-    1020:	c7 44 24 0c a3 17 00 	movl   $0x17a3,0xc(%esp)
+    1020:	c7 44 24 0c a1 17 00 	movl   $0x17a1,0xc(%esp)
     1027:	00 
     1028:	8b 44 9f fc          	mov    -0x4(%edi,%ebx,4),%eax
-    102c:	c7 44 24 04 a5 17 00 	movl   $0x17a5,0x4(%esp)
+    102c:	c7 44 24 04 a3 17 00 	movl   $0x17a3,0x4(%esp)
     1033:	00 
     1034:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     103b:	89 44 24 08          	mov    %eax,0x8(%esp)
@@ -40,10 +40,10 @@ main(int argc, char *argv[])
     1044:	83 c3 01             	add    $0x1,%ebx
     1047:	39 f3                	cmp    %esi,%ebx
     1049:	75 d5                	jne    1020 <main+0x20>
-    104b:	c7 44 24 0c aa 17 00 	movl   $0x17aa,0xc(%esp)
+    104b:	c7 44 24 0c a8 17 00 	movl   $0x17a8,0xc(%esp)
     1052:	00 
     1053:	8b 44 9f fc          	mov    -0x4(%edi,%ebx,4),%eax
-    1057:	c7 44 24 04 a5 17 00 	movl   $0x17a5,0x4(%esp)
+    1057:	c7 44 24 04 a3 17 00 	movl   $0x17a3,0x4(%esp)
     105e:	00 
     105f:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     1066:	89 44 24 08          	mov    %eax,0x8(%esp)
@@ -753,7 +753,7 @@ printint(int fd, int xx, int base, int sgn)
     1392:	31 d2                	xor    %edx,%edx
     1394:	f7 f6                	div    %esi
     1396:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1399:	0f b6 92 b3 17 00 00 	movzbl 0x17b3(%edx),%edx
+    1399:	0f b6 92 b1 17 00 00 	movzbl 0x17b1(%edx),%edx
   }while((x /= base) != 0);
     13a0:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1118,7 +1118,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    1531:	b8 ac 17 00 00       	mov    $0x17ac,%eax
+    1531:	b8 aa 17 00 00       	mov    $0x17aa,%eax
     1536:	85 ff                	test   %edi,%edi
     1538:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1654,10 +1654,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1789:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1789:	0f ae f0             	mfence 
 }
-    178e:	5d                   	pop    %ebp
-    178f:	c3                   	ret    
+    178c:	5d                   	pop    %ebp
+    178d:	c3                   	ret    
+    178e:	66 90                	xchg   %ax,%ax
 
 00001790 <urelease>:
 
@@ -1666,13 +1667,13 @@ void urelease (struct uspinlock *lk) {
     1791:	89 e5                	mov    %esp,%ebp
     1793:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1796:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1796:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    179b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1799:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    17a1:	5d                   	pop    %ebp
-    17a2:	c3                   	ret    
+    179f:	5d                   	pop    %ebp
+    17a0:	c3                   	ret    

@@ -1,5 +1,5 @@
 00001000 .text
-000017a3 .rodata
+000017a1 .rodata
 000017e8 .eh_frame
 00001a94 .bss
 00000000 .comment
@@ -14,12 +14,11 @@
 00000000 ulib.c
 00000000 printf.c
 00001360 printint
-000017d7 digits.1035
+000017d5 digits.1359
 00000000 umalloc.c
 00001a94 freep
 00001a98 base
 00000000 uspinlock.c
-00000000 
 00001080 strcpy
 00001400 printf
 00001270 memmove

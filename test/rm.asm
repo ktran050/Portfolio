@@ -72,7 +72,7 @@ main(int argc, char *argv[])
     if(unlink(argv[i]) < 0){
       printf(2, "rm: %s failed to delete\n", argv[i]);
     103d:	8b 03                	mov    (%ebx),%eax
-    103f:	c7 44 24 04 b7 17 00 	movl   $0x17b7,0x4(%esp)
+    103f:	c7 44 24 04 b5 17 00 	movl   $0x17b5,0x4(%esp)
     1046:	00 
     1047:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
     104e:	89 44 24 08          	mov    %eax,0x8(%esp)
@@ -85,7 +85,7 @@ main(int argc, char *argv[])
 
   if(argc < 2){
     printf(2, "Usage: rm files...\n");
-    1059:	c7 44 24 04 a3 17 00 	movl   $0x17a3,0x4(%esp)
+    1059:	c7 44 24 04 a1 17 00 	movl   $0x17a1,0x4(%esp)
     1060:	00 
     1061:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
     1068:	e8 93 03 00 00       	call   1400 <printf>
@@ -795,7 +795,7 @@ printint(int fd, int xx, int base, int sgn)
     1392:	31 d2                	xor    %edx,%edx
     1394:	f7 f6                	div    %esi
     1396:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1399:	0f b6 92 d7 17 00 00 	movzbl 0x17d7(%edx),%edx
+    1399:	0f b6 92 d5 17 00 00 	movzbl 0x17d5(%edx),%edx
   }while((x /= base) != 0);
     13a0:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1160,7 +1160,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    1531:	b8 d0 17 00 00       	mov    $0x17d0,%eax
+    1531:	b8 ce 17 00 00       	mov    $0x17ce,%eax
     1536:	85 ff                	test   %edi,%edi
     1538:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1696,10 +1696,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1789:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1789:	0f ae f0             	mfence 
 }
-    178e:	5d                   	pop    %ebp
-    178f:	c3                   	ret    
+    178c:	5d                   	pop    %ebp
+    178d:	c3                   	ret    
+    178e:	66 90                	xchg   %ax,%ax
 
 00001790 <urelease>:
 
@@ -1708,13 +1709,13 @@ void urelease (struct uspinlock *lk) {
     1791:	89 e5                	mov    %esp,%ebp
     1793:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1796:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1796:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    179b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1799:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    17a1:	5d                   	pop    %ebp
-    17a2:	c3                   	ret    
+    179f:	5d                   	pop    %ebp
+    17a0:	c3                   	ret    

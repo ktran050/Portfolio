@@ -14,12 +14,11 @@
 00000000 ulib.c
 00000000 printf.c
 000015f0 printint
-00001a71 digits.1035
+00001a71 digits.1359
 00000000 umalloc.c
 00001e20 freep
 00001e24 base
 00000000 uspinlock.c
-00000000 
 00001310 strcpy
 00001690 printf
 00001500 memmove

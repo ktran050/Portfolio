@@ -21,7 +21,7 @@ main(void)
   if(open("console", O_RDWR) < 0){
     100a:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%esp)
     1011:	00 
-    1012:	c7 04 24 33 18 00 00 	movl   $0x1833,(%esp)
+    1012:	c7 04 24 31 18 00 00 	movl   $0x1831,(%esp)
     1019:	e8 54 03 00 00       	call   1372 <open>
     101e:	85 c0                	test   %eax,%eax
     1020:	0f 88 ac 00 00 00    	js     10d2 <main+0xd2>
@@ -38,7 +38,7 @@ main(void)
 
   for(;;){
     printf(1, "init: starting sh\n");
-    1040:	c7 44 24 04 3b 18 00 	movl   $0x183b,0x4(%esp)
+    1040:	c7 44 24 04 39 18 00 	movl   $0x1839,0x4(%esp)
     1047:	00 
     1048:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     104f:	e8 3c 04 00 00       	call   1490 <printf>
@@ -74,7 +74,7 @@ main(void)
     1072:	39 d8                	cmp    %ebx,%eax
     1074:	74 ca                	je     1040 <main+0x40>
       printf(1, "zombie!\n");
-    1076:	c7 44 24 04 7a 18 00 	movl   $0x187a,0x4(%esp)
+    1076:	c7 44 24 04 78 18 00 	movl   $0x1878,0x4(%esp)
     107d:	00 
     107e:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     1085:	e8 06 04 00 00       	call   1490 <printf>
@@ -85,7 +85,7 @@ main(void)
     pid = fork();
     if(pid < 0){
       printf(1, "init: fork failed\n");
-    108c:	c7 44 24 04 4e 18 00 	movl   $0x184e,0x4(%esp)
+    108c:	c7 44 24 04 4c 18 00 	movl   $0x184c,0x4(%esp)
     1093:	00 
     1094:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     109b:	e8 f0 03 00 00       	call   1490 <printf>
@@ -96,10 +96,10 @@ main(void)
       exec("sh", argv);
     10a5:	c7 44 24 04 40 1b 00 	movl   $0x1b40,0x4(%esp)
     10ac:	00 
-    10ad:	c7 04 24 61 18 00 00 	movl   $0x1861,(%esp)
+    10ad:	c7 04 24 5f 18 00 00 	movl   $0x185f,(%esp)
     10b4:	e8 b1 02 00 00       	call   136a <exec>
       printf(1, "init: exec sh failed\n");
-    10b9:	c7 44 24 04 64 18 00 	movl   $0x1864,0x4(%esp)
+    10b9:	c7 44 24 04 62 18 00 	movl   $0x1862,0x4(%esp)
     10c0:	00 
     10c1:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     10c8:	e8 c3 03 00 00       	call   1490 <printf>
@@ -115,12 +115,12 @@ main(void)
     10d9:	00 
     10da:	c7 44 24 04 01 00 00 	movl   $0x1,0x4(%esp)
     10e1:	00 
-    10e2:	c7 04 24 33 18 00 00 	movl   $0x1833,(%esp)
+    10e2:	c7 04 24 31 18 00 00 	movl   $0x1831,(%esp)
     10e9:	e8 8c 02 00 00       	call   137a <mknod>
     open("console", O_RDWR);
     10ee:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%esp)
     10f5:	00 
-    10f6:	c7 04 24 33 18 00 00 	movl   $0x1833,(%esp)
+    10f6:	c7 04 24 31 18 00 00 	movl   $0x1831,(%esp)
     10fd:	e8 70 02 00 00       	call   1372 <open>
     1102:	e9 1f ff ff ff       	jmp    1026 <main+0x26>
     1107:	66 90                	xchg   %ax,%ax
@@ -825,7 +825,7 @@ printint(int fd, int xx, int base, int sgn)
     1422:	31 d2                	xor    %edx,%edx
     1424:	f7 f6                	div    %esi
     1426:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1429:	0f b6 92 8a 18 00 00 	movzbl 0x188a(%edx),%edx
+    1429:	0f b6 92 88 18 00 00 	movzbl 0x1888(%edx),%edx
   }while((x /= base) != 0);
     1430:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1190,7 +1190,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    15c1:	b8 83 18 00 00       	mov    $0x1883,%eax
+    15c1:	b8 81 18 00 00       	mov    $0x1881,%eax
     15c6:	85 ff                	test   %edi,%edi
     15c8:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1726,10 +1726,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1819:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1819:	0f ae f0             	mfence 
 }
-    181e:	5d                   	pop    %ebp
-    181f:	c3                   	ret    
+    181c:	5d                   	pop    %ebp
+    181d:	c3                   	ret    
+    181e:	66 90                	xchg   %ax,%ax
 
 00001820 <urelease>:
 
@@ -1738,13 +1739,13 @@ void urelease (struct uspinlock *lk) {
     1821:	89 e5                	mov    %esp,%ebp
     1823:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1826:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1826:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    182b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1829:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    1831:	5d                   	pop    %ebp
-    1832:	c3                   	ret    
+    182f:	5d                   	pop    %ebp
+    1830:	c3                   	ret    

@@ -3509,10 +3509,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    22c9:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    22c9:	0f ae f0             	mfence 
 }
-    22ce:	5d                   	pop    %ebp
-    22cf:	c3                   	ret    
+    22cc:	5d                   	pop    %ebp
+    22cd:	c3                   	ret    
+    22ce:	66 90                	xchg   %ax,%ax
 
 000022d0 <urelease>:
 
@@ -3521,13 +3522,13 @@ void urelease (struct uspinlock *lk) {
     22d1:	89 e5                	mov    %esp,%ebp
     22d3:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    22d6:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    22d6:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    22db:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    22d9:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    22e1:	5d                   	pop    %ebp
-    22e2:	c3                   	ret    
+    22df:	5d                   	pop    %ebp
+    22e0:	c3                   	ret    

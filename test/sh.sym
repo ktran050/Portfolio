@@ -12,16 +12,15 @@
 00000000 .debug_loc
 00000000 .debug_ranges
 00000000 sh.c
-000029c0 buf.1073
+000029c0 buf.1397
 00000000 ulib.c
 00000000 printf.c
 00001ea0 printint
-000023d3 digits.1035
+000023d3 digits.1359
 00000000 umalloc.c
 00002a24 freep
 00002a28 base
 00000000 uspinlock.c
-00000000 
 00001bc0 strcpy
 00001f40 printf
 00001db0 memmove

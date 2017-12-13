@@ -1,5 +1,5 @@
 00001000 .text
-00001833 .rodata
+00001831 .rodata
 0000189c .eh_frame
 00001b40 .data
 00001b48 .bss
@@ -15,12 +15,11 @@
 00000000 ulib.c
 00000000 printf.c
 000013f0 printint
-0000188a digits.1035
+00001888 digits.1359
 00000000 umalloc.c
 00001b48 freep
 00001b4c base
 00000000 uspinlock.c
-00000000 
 00001110 strcpy
 00001490 printf
 00001b40 argv

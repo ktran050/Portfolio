@@ -72,7 +72,7 @@ main(int argc, char *argv[])
     if(mkdir(argv[i]) < 0){
       printf(2, "mkdir: %s failed to create\n", argv[i]);
     103d:	8b 03                	mov    (%ebx),%eax
-    103f:	c7 44 24 04 ba 17 00 	movl   $0x17ba,0x4(%esp)
+    103f:	c7 44 24 04 b8 17 00 	movl   $0x17b8,0x4(%esp)
     1046:	00 
     1047:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
     104e:	89 44 24 08          	mov    %eax,0x8(%esp)
@@ -85,7 +85,7 @@ main(int argc, char *argv[])
 
   if(argc < 2){
     printf(2, "Usage: mkdir files...\n");
-    1059:	c7 44 24 04 a3 17 00 	movl   $0x17a3,0x4(%esp)
+    1059:	c7 44 24 04 a1 17 00 	movl   $0x17a1,0x4(%esp)
     1060:	00 
     1061:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
     1068:	e8 93 03 00 00       	call   1400 <printf>
@@ -795,7 +795,7 @@ printint(int fd, int xx, int base, int sgn)
     1392:	31 d2                	xor    %edx,%edx
     1394:	f7 f6                	div    %esi
     1396:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1399:	0f b6 92 dd 17 00 00 	movzbl 0x17dd(%edx),%edx
+    1399:	0f b6 92 db 17 00 00 	movzbl 0x17db(%edx),%edx
   }while((x /= base) != 0);
     13a0:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1160,7 +1160,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    1531:	b8 d6 17 00 00       	mov    $0x17d6,%eax
+    1531:	b8 d4 17 00 00       	mov    $0x17d4,%eax
     1536:	85 ff                	test   %edi,%edi
     1538:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1337,7 +1337,7 @@ free(void *ap)
 
   bp = (Header*)ap - 1;
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
-    15f1:	a1 9c 1a 00 00       	mov    0x1a9c,%eax
+    15f1:	a1 98 1a 00 00       	mov    0x1a98,%eax
 static Header base;
 static Header *freep;
 
@@ -1415,7 +1415,7 @@ free(void *ap)
     p->s.ptr = bp;
     1637:	89 10                	mov    %edx,(%eax)
   freep = p;
-    1639:	a3 9c 1a 00 00       	mov    %eax,0x1a9c
+    1639:	a3 98 1a 00 00       	mov    %eax,0x1a98
 }
     163e:	5b                   	pop    %ebx
     163f:	5e                   	pop    %esi
@@ -1449,7 +1449,7 @@ free(void *ap)
   } else
     p->s.ptr = bp;
   freep = p;
-    1662:	a3 9c 1a 00 00       	mov    %eax,0x1a9c
+    1662:	a3 98 1a 00 00       	mov    %eax,0x1a98
     bp->s.size += p->s.ptr->s.size;
     bp->s.ptr = p->s.ptr->s.ptr;
   } else
@@ -1491,7 +1491,7 @@ malloc(uint nbytes)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
     1689:	8b 45 08             	mov    0x8(%ebp),%eax
   if((prevp = freep) == 0){
-    168c:	8b 1d 9c 1a 00 00    	mov    0x1a9c,%ebx
+    168c:	8b 1d 98 1a 00 00    	mov    0x1a98,%ebx
 malloc(uint nbytes)
 {
   Header *p, *prevp;
@@ -1549,7 +1549,7 @@ morecore(uint nu)
       return (void*)(p + 1);
     }
     if(p == freep)
-    16cb:	3b 15 9c 1a 00 00    	cmp    0x1a9c,%edx
+    16cb:	3b 15 98 1a 00 00    	cmp    0x1a98,%edx
     16d1:	75 ed                	jne    16c0 <malloc+0x40>
 morecore(uint nu)
 {
@@ -1578,7 +1578,7 @@ morecore(uint nu)
     16fa:	89 04 24             	mov    %eax,(%esp)
     16fd:	e8 ee fe ff ff       	call   15f0 <free>
   return freep;
-    1702:	8b 15 9c 1a 00 00    	mov    0x1a9c,%edx
+    1702:	8b 15 98 1a 00 00    	mov    0x1a98,%edx
       }
       freep = prevp;
       return (void*)(p + 1);
@@ -1613,7 +1613,7 @@ morecore(uint nu)
     1724:	89 70 04             	mov    %esi,0x4(%eax)
       }
       freep = prevp;
-    1727:	89 15 9c 1a 00 00    	mov    %edx,0x1a9c
+    1727:	89 15 98 1a 00 00    	mov    %edx,0x1a98
       return (void*)(p + 1);
     172d:	83 c0 08             	add    $0x8,%eax
     }
@@ -1643,20 +1643,20 @@ morecore(uint nu)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
-    173e:	c7 05 9c 1a 00 00 a0 	movl   $0x1aa0,0x1a9c
+    173e:	c7 05 98 1a 00 00 9c 	movl   $0x1a9c,0x1a98
     1745:	1a 00 00 
     base.s.size = 0;
-    1748:	ba a0 1a 00 00       	mov    $0x1aa0,%edx
+    1748:	ba 9c 1a 00 00       	mov    $0x1a9c,%edx
   Header *p, *prevp;
   uint nunits;
 
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
-    174d:	c7 05 a0 1a 00 00 a0 	movl   $0x1aa0,0x1aa0
+    174d:	c7 05 9c 1a 00 00 9c 	movl   $0x1a9c,0x1a9c
     1754:	1a 00 00 
     base.s.size = 0;
-    1757:	c7 05 a4 1a 00 00 00 	movl   $0x0,0x1aa4
+    1757:	c7 05 a0 1a 00 00 00 	movl   $0x0,0x1aa0
     175e:	00 00 00 
     1761:	e9 46 ff ff ff       	jmp    16ac <malloc+0x2c>
     1766:	66 90                	xchg   %ax,%ax
@@ -1696,10 +1696,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1789:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1789:	0f ae f0             	mfence 
 }
-    178e:	5d                   	pop    %ebp
-    178f:	c3                   	ret    
+    178c:	5d                   	pop    %ebp
+    178d:	c3                   	ret    
+    178e:	66 90                	xchg   %ax,%ax
 
 00001790 <urelease>:
 
@@ -1708,13 +1709,13 @@ void urelease (struct uspinlock *lk) {
     1791:	89 e5                	mov    %esp,%ebp
     1793:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1796:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1796:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    179b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1799:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    17a1:	5d                   	pop    %ebp
-    17a2:	c3                   	ret    
+    179f:	5d                   	pop    %ebp
+    17a0:	c3                   	ret    

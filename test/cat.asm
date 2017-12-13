@@ -94,7 +94,7 @@ main(int argc, char *argv[])
     if((fd = open(argv[i], 0)) < 0){
       printf(1, "cat: cannot open %s\n", argv[i]);
     1058:	8b 03                	mov    (%ebx),%eax
-    105a:	c7 44 24 04 66 18 00 	movl   $0x1866,0x4(%esp)
+    105a:	c7 44 24 04 64 18 00 	movl   $0x1864,0x4(%esp)
     1061:	00 
     1062:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     1069:	89 44 24 08          	mov    %eax,0x8(%esp)
@@ -179,7 +179,7 @@ cat(int fd)
   while((n = read(fd, buf, sizeof(buf))) > 0) {
     if (write(1, buf, n) != n) {
       printf(1, "cat: write error\n");
-    10e4:	c7 44 24 04 43 18 00 	movl   $0x1843,0x4(%esp)
+    10e4:	c7 44 24 04 41 18 00 	movl   $0x1841,0x4(%esp)
     10eb:	00 
     10ec:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     10f3:	e8 a8 03 00 00       	call   14a0 <printf>
@@ -189,7 +189,7 @@ cat(int fd)
   }
   if(n < 0){
     printf(1, "cat: read error\n");
-    10fd:	c7 44 24 04 55 18 00 	movl   $0x1855,0x4(%esp)
+    10fd:	c7 44 24 04 53 18 00 	movl   $0x1853,0x4(%esp)
     1104:	00 
     1105:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     110c:	e8 8f 03 00 00       	call   14a0 <printf>
@@ -897,7 +897,7 @@ printint(int fd, int xx, int base, int sgn)
     1432:	31 d2                	xor    %edx,%edx
     1434:	f7 f6                	div    %esi
     1436:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1439:	0f b6 92 82 18 00 00 	movzbl 0x1882(%edx),%edx
+    1439:	0f b6 92 80 18 00 00 	movzbl 0x1880(%edx),%edx
   }while((x /= base) != 0);
     1440:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1262,7 +1262,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    15d1:	b8 7b 18 00 00       	mov    $0x187b,%eax
+    15d1:	b8 79 18 00 00       	mov    $0x1879,%eax
     15d6:	85 ff                	test   %edi,%edi
     15d8:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1798,10 +1798,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1829:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1829:	0f ae f0             	mfence 
 }
-    182e:	5d                   	pop    %ebp
-    182f:	c3                   	ret    
+    182c:	5d                   	pop    %ebp
+    182d:	c3                   	ret    
+    182e:	66 90                	xchg   %ax,%ax
 
 00001830 <urelease>:
 
@@ -1810,13 +1811,13 @@ void urelease (struct uspinlock *lk) {
     1831:	89 e5                	mov    %esp,%ebp
     1833:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1836:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1836:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    183b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1839:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    1841:	5d                   	pop    %ebp
-    1842:	c3                   	ret    
+    183f:	5d                   	pop    %ebp
+    1840:	c3                   	ret    

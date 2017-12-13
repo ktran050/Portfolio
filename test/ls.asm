@@ -69,7 +69,7 @@ main(int argc, char *argv[])
 
   if(argc < 2){
     ls(".");
-    1037:	c7 04 24 eb 1a 00 00 	movl   $0x1aeb,(%esp)
+    1037:	c7 04 24 e9 1a 00 00 	movl   $0x1ae9,(%esp)
     103e:	e8 ad 00 00 00       	call   10f0 <ls>
     exit();
     1043:	e8 5a 05 00 00       	call   15a2 <exit>
@@ -122,7 +122,7 @@ fmtname(char *path)
     108c:	89 1c 24             	mov    %ebx,(%esp)
     108f:	e8 6c 03 00 00       	call   1400 <strlen>
     1094:	89 5c 24 04          	mov    %ebx,0x4(%esp)
-    1098:	c7 04 24 18 1e 00 00 	movl   $0x1e18,(%esp)
+    1098:	c7 04 24 14 1e 00 00 	movl   $0x1e14,(%esp)
     109f:	89 44 24 08          	mov    %eax,0x8(%esp)
     10a3:	e8 c8 04 00 00       	call   1570 <memmove>
   memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
@@ -130,7 +130,7 @@ fmtname(char *path)
     10ab:	e8 50 03 00 00       	call   1400 <strlen>
     10b0:	89 1c 24             	mov    %ebx,(%esp)
   return buf;
-    10b3:	bb 18 1e 00 00       	mov    $0x1e18,%ebx
+    10b3:	bb 14 1e 00 00       	mov    $0x1e14,%ebx
 
   // Return blank-padded name.
   if(strlen(p) >= DIRSIZ)
@@ -144,7 +144,7 @@ fmtname(char *path)
     10c6:	89 54 24 08          	mov    %edx,0x8(%esp)
     10ca:	c7 44 24 04 20 00 00 	movl   $0x20,0x4(%esp)
     10d1:	00 
-    10d2:	05 18 1e 00 00       	add    $0x1e18,%eax
+    10d2:	05 14 1e 00 00       	add    $0x1e14,%eax
     10d7:	89 04 24             	mov    %eax,(%esp)
     10da:	e8 51 03 00 00       	call   1430 <memset>
   return buf;
@@ -216,7 +216,7 @@ ls(char *path)
     1166:	89 74 24 10          	mov    %esi,0x10(%esp)
     116a:	c7 44 24 0c 02 00 00 	movl   $0x2,0xc(%esp)
     1171:	00 
-    1172:	c7 44 24 04 cb 1a 00 	movl   $0x1acb,0x4(%esp)
+    1172:	c7 44 24 04 c9 1a 00 	movl   $0x1ac9,0x4(%esp)
     1179:	00 
     117a:	89 54 24 14          	mov    %edx,0x14(%esp)
     117e:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
@@ -323,7 +323,7 @@ ls(char *path)
     1299:	e8 b2 fd ff ff       	call   1050 <fmtname>
     129e:	8b 8d ac fd ff ff    	mov    -0x254(%ebp),%ecx
     12a4:	8b 95 b0 fd ff ff    	mov    -0x250(%ebp),%edx
-    12aa:	c7 44 24 04 cb 1a 00 	movl   $0x1acb,0x4(%esp)
+    12aa:	c7 44 24 04 c9 1a 00 	movl   $0x1ac9,0x4(%esp)
     12b1:	00 
     12b2:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     12b9:	89 4c 24 14          	mov    %ecx,0x14(%esp)
@@ -341,7 +341,7 @@ ls(char *path)
   if((fd = open(path, 0)) < 0){
     printf(2, "ls: cannot open %s\n", path);
     12e0:	89 7c 24 08          	mov    %edi,0x8(%esp)
-    12e4:	c7 44 24 04 a3 1a 00 	movl   $0x1aa3,0x4(%esp)
+    12e4:	c7 44 24 04 a1 1a 00 	movl   $0x1aa1,0x4(%esp)
     12eb:	00 
     12ec:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
     12f3:	e8 08 04 00 00       	call   1700 <printf>
@@ -365,7 +365,7 @@ ls(char *path)
   case T_DIR:
     if(strlen(path) + 1 + DIRSIZ + 1 > sizeof buf){
       printf(1, "ls: path too long\n");
-    1308:	c7 44 24 04 d8 1a 00 	movl   $0x1ad8,0x4(%esp)
+    1308:	c7 44 24 04 d6 1a 00 	movl   $0x1ad6,0x4(%esp)
     130f:	00 
     1310:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     1317:	e8 e4 03 00 00       	call   1700 <printf>
@@ -379,7 +379,7 @@ ls(char *path)
   if(fstat(fd, &st) < 0){
     printf(2, "ls: cannot stat %s\n", path);
     1328:	89 7c 24 08          	mov    %edi,0x8(%esp)
-    132c:	c7 44 24 04 b7 1a 00 	movl   $0x1ab7,0x4(%esp)
+    132c:	c7 44 24 04 b5 1a 00 	movl   $0x1ab5,0x4(%esp)
     1333:	00 
     1334:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
     133b:	e8 c0 03 00 00       	call   1700 <printf>
@@ -397,7 +397,7 @@ ls(char *path)
         printf(1, "ls: cannot stat %s\n", buf);
     1350:	8d 85 e8 fd ff ff    	lea    -0x218(%ebp),%eax
     1356:	89 44 24 08          	mov    %eax,0x8(%esp)
-    135a:	c7 44 24 04 b7 1a 00 	movl   $0x1ab7,0x4(%esp)
+    135a:	c7 44 24 04 b5 1a 00 	movl   $0x1ab5,0x4(%esp)
     1361:	00 
     1362:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
     1369:	e8 92 03 00 00       	call   1700 <printf>
@@ -1107,7 +1107,7 @@ printint(int fd, int xx, int base, int sgn)
     1692:	31 d2                	xor    %edx,%edx
     1694:	f7 f6                	div    %esi
     1696:	8d 4f 01             	lea    0x1(%edi),%ecx
-    1699:	0f b6 92 f4 1a 00 00 	movzbl 0x1af4(%edx),%edx
+    1699:	0f b6 92 f2 1a 00 00 	movzbl 0x1af2(%edx),%edx
   }while((x /= base) != 0);
     16a0:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1472,7 +1472,7 @@ putc(int fd, char c)
         ap++;
         if(s == 0)
           s = "(null)";
-    1831:	b8 ed 1a 00 00       	mov    $0x1aed,%eax
+    1831:	b8 eb 1a 00 00       	mov    $0x1aeb,%eax
     1836:	85 ff                	test   %edi,%edi
     1838:	0f 44 f8             	cmove  %eax,%edi
         while(*s != 0){
@@ -1649,7 +1649,7 @@ free(void *ap)
 
   bp = (Header*)ap - 1;
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
-    18f1:	a1 28 1e 00 00       	mov    0x1e28,%eax
+    18f1:	a1 24 1e 00 00       	mov    0x1e24,%eax
 static Header base;
 static Header *freep;
 
@@ -1727,7 +1727,7 @@ free(void *ap)
     p->s.ptr = bp;
     1937:	89 10                	mov    %edx,(%eax)
   freep = p;
-    1939:	a3 28 1e 00 00       	mov    %eax,0x1e28
+    1939:	a3 24 1e 00 00       	mov    %eax,0x1e24
 }
     193e:	5b                   	pop    %ebx
     193f:	5e                   	pop    %esi
@@ -1761,7 +1761,7 @@ free(void *ap)
   } else
     p->s.ptr = bp;
   freep = p;
-    1962:	a3 28 1e 00 00       	mov    %eax,0x1e28
+    1962:	a3 24 1e 00 00       	mov    %eax,0x1e24
     bp->s.size += p->s.ptr->s.size;
     bp->s.ptr = p->s.ptr->s.ptr;
   } else
@@ -1803,7 +1803,7 @@ malloc(uint nbytes)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
     1989:	8b 45 08             	mov    0x8(%ebp),%eax
   if((prevp = freep) == 0){
-    198c:	8b 1d 28 1e 00 00    	mov    0x1e28,%ebx
+    198c:	8b 1d 24 1e 00 00    	mov    0x1e24,%ebx
 malloc(uint nbytes)
 {
   Header *p, *prevp;
@@ -1861,7 +1861,7 @@ morecore(uint nu)
       return (void*)(p + 1);
     }
     if(p == freep)
-    19cb:	3b 15 28 1e 00 00    	cmp    0x1e28,%edx
+    19cb:	3b 15 24 1e 00 00    	cmp    0x1e24,%edx
     19d1:	75 ed                	jne    19c0 <malloc+0x40>
 morecore(uint nu)
 {
@@ -1890,7 +1890,7 @@ morecore(uint nu)
     19fa:	89 04 24             	mov    %eax,(%esp)
     19fd:	e8 ee fe ff ff       	call   18f0 <free>
   return freep;
-    1a02:	8b 15 28 1e 00 00    	mov    0x1e28,%edx
+    1a02:	8b 15 24 1e 00 00    	mov    0x1e24,%edx
       }
       freep = prevp;
       return (void*)(p + 1);
@@ -1925,7 +1925,7 @@ morecore(uint nu)
     1a24:	89 70 04             	mov    %esi,0x4(%eax)
       }
       freep = prevp;
-    1a27:	89 15 28 1e 00 00    	mov    %edx,0x1e28
+    1a27:	89 15 24 1e 00 00    	mov    %edx,0x1e24
       return (void*)(p + 1);
     1a2d:	83 c0 08             	add    $0x8,%eax
     }
@@ -1955,20 +1955,20 @@ morecore(uint nu)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
-    1a3e:	c7 05 28 1e 00 00 2c 	movl   $0x1e2c,0x1e28
+    1a3e:	c7 05 24 1e 00 00 28 	movl   $0x1e28,0x1e24
     1a45:	1e 00 00 
     base.s.size = 0;
-    1a48:	ba 2c 1e 00 00       	mov    $0x1e2c,%edx
+    1a48:	ba 28 1e 00 00       	mov    $0x1e28,%edx
   Header *p, *prevp;
   uint nunits;
 
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
-    1a4d:	c7 05 2c 1e 00 00 2c 	movl   $0x1e2c,0x1e2c
+    1a4d:	c7 05 28 1e 00 00 28 	movl   $0x1e28,0x1e28
     1a54:	1e 00 00 
     base.s.size = 0;
-    1a57:	c7 05 30 1e 00 00 00 	movl   $0x0,0x1e30
+    1a57:	c7 05 2c 1e 00 00 00 	movl   $0x0,0x1e2c
     1a5e:	00 00 00 
     1a61:	e9 46 ff ff ff       	jmp    19ac <malloc+0x2c>
     1a66:	66 90                	xchg   %ax,%ax
@@ -2008,10 +2008,11 @@ xchg(volatile uint *addr, uint newval)
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
   __sync_synchronize();
-    1a89:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1a89:	0f ae f0             	mfence 
 }
-    1a8e:	5d                   	pop    %ebp
-    1a8f:	c3                   	ret    
+    1a8c:	5d                   	pop    %ebp
+    1a8d:	c3                   	ret    
+    1a8e:	66 90                	xchg   %ax,%ax
 
 00001a90 <urelease>:
 
@@ -2020,13 +2021,13 @@ void urelease (struct uspinlock *lk) {
     1a91:	89 e5                	mov    %esp,%ebp
     1a93:	8b 45 08             	mov    0x8(%ebp),%eax
   __sync_synchronize();
-    1a96:	f0 83 0c 24 00       	lock orl $0x0,(%esp)
+    1a96:	0f ae f0             	mfence 
 
   // Release the lock, equivalent to lk->locked = 0.
   // This code can't use a C assignment, since it might
   // not be atomic. A real OS would use C atomics here.
   asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-    1a9b:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+    1a99:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 }
-    1aa1:	5d                   	pop    %ebp
-    1aa2:	c3                   	ret    
+    1a9f:	5d                   	pop    %ebp
+    1aa0:	c3                   	ret    
