@@ -36,6 +36,7 @@ idtinit(void)
 void
 trap(struct trapframe *tf)
 {
+//  uint stack_top=KERNBASE-4-(myproc()->stacksz*PGSIZE);
   if(tf->trapno == T_SYSCALL){
     if(myproc()->killed)
       exit();
@@ -76,6 +77,18 @@ trap(struct trapframe *tf)
     cprintf("cpu%d: spurious interrupt at %x:%x\n",
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
+
+  case T_PGFLT:; 
+    // Check if the offending address is right under the stack
+    uint stack_top=KERNBASE-4-(myproc()->stacksz*PGSIZE);
+    uint bpage = PGROUNDDOWN(rcr2()); uint tpage=PGROUNDUP(rcr2());
+    if(rcr2() < stack_top && rcr2() > stack_top-PGSIZE){
+      // Call allocuvm
+      if(allocuvm(myproc()->pgdir, bpage, tpage) == 0)
+        panic("allocuvm failed");
+      // Increase the stack size
+      myproc()->stacksz++; 
+    }
     break;
 
   //PAGEBREAK: 13

@@ -34,7 +34,7 @@ fetchstr(uint addr, char **pp)
   char *s, *ep;
 
   //if(addr >= curproc->sz)
-//  if (addr >= STACK_TOP)
+//  if (addr >= KERNBASE-4)
 //    return -1;
   *pp = (char*)addr;
   ep = (char*)KERNBASE-4;
@@ -42,6 +42,13 @@ fetchstr(uint addr, char **pp)
     if(*s == 0)
       return s - *pp;
   }
+
+//  *pp = (char*)addr;
+//  ep = (char*)myproc()->sz;
+//  for(s = *pp; s < ep; s++){
+//    if(*s == 0)
+//      return *pp - s;
+//  }
   return -1;
 }
 
