@@ -1,0 +1,8 @@
+//date(unsigned mn, unsigned d, unsigned y)
+//if the constructor finds an invalid month name cout
+//"Invalid month name: the date was set to 1/1/2000" newline
+//if the month is right but the day isnt, cout that as well
+//constructor can recognize december and December
+
+//date(unsignmed m, unsigned d, unsigned y)
+//same but without month name
