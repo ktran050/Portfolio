@@ -26,7 +26,7 @@ Render_World::~Render_World()
 // Any intersection with t<=small_t should be ignored.
 Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
 {
-    //CS164
+    //CS130
     //Set min_t to a large value
     Object* closest = NULL;
     int min_t = std::numeric_limits<int>::max();
@@ -51,7 +51,7 @@ Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
 void Render_World::Render_Pixel(const ivec2& pixel_index)
 {
     Ray ray;
-    //CS164: init ray with endpoint (camera position) and world position 
+    //CS130: init ray with endpoint (camera position) and world position 
     ray = Ray(camera.position, camera.World_Position(pixel_index));
     vec3 color=Cast_Ray(ray,1);
     camera.Set_Pixel(pixel_index,Pixel_Color(color));
