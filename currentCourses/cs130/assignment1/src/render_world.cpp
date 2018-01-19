@@ -28,24 +28,23 @@ Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
 {
     //CS164
     //Set min_t to a large value
-    Hit* closest = NULL;
+    Object* closest = NULL;
     int min_t = std::numeric_limits<int>::max();
     for(unsigned i = 0; i < objects.size(); i++){
 	std::vector<Hit> hitList;
 	hitList.clear();
 	objects[i]->Intersection(ray, hitList);	// if the object is a hit with the ray push it back
-	
-	closest = &hitList[0];	
+		
 	// for each hit in hitList
 	for(unsigned b = 0; b < hitList.size(); b++){
-	    if(hitList[i].t < closest->t && hitList[i].t > small_t){	// new closer hit
-	    	closest = &hitList[i];
-	    	hit = closest;// set hit to h
-	    	min_t = closest->t;	// update min_t
+	    if(hitList[i].t < min_t && hitList[i].t > small_t){	// new closer hit
+	    	closest = objects[i];
+	    	hit = hitList[i];// set hit to h
+	    	min_t = hitList[i].t;	// update min_t
 	    }
 	}
     }
-    return &hit;
+    return closest;
 }
 
 // set up the initial view ray and call
