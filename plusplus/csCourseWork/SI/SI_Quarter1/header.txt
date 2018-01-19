@@ -1,0 +1,7 @@
+//  =============== BEGIN ASSESSMENT HEADER ================
+/// @file lab2.cpp 
+/// @brief Lab 2
+///
+/// @author Test Student [RSubEmail@ucr.edu]
+/// @date April 8, 2014
+//  ================== END ASSESSMENT HEADER ===============
