@@ -4,6 +4,7 @@
 #include "object.h"
 #include "light.h"
 #include "ray.h"
+#include <limits>
 
 
 Render_World::Render_World()
@@ -25,14 +26,34 @@ Render_World::~Render_World()
 // Any intersection with t<=small_t should be ignored.
 Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
 {
-    // TODO
-    return 0;
+    //CS164
+    //Set min_t to a large value
+    Hit* closest = NULL;
+    int min_t = std::numeric_limits<int>::max();
+    for(unsigned i = 0; i < objects.size(); i++){
+	std::vector<Hit> hitList;
+	hitList.clear();
+	objects[i]->Intersection(ray, hitList);	// if the object is a hit with the ray push it back
+	
+	closest = &hitList[0];	
+	// for each hit in hitList
+	for(unsigned b = 0; b < hitList.size(); b++){
+	    if(hitList[i].t < closest->t && hitList[i].t > small_t){	// new closer hit
+	    	closest = &hitList[i];
+	    	hit = closest;// set hit to h
+	    	min_t = closest->t;	// update min_t
+	    }
+	}
+    }
+    return &hit;
 }
 
 // set up the initial view ray and call
 void Render_World::Render_Pixel(const ivec2& pixel_index)
 {
-    Ray ray; // TODO: set up the initial view ray here
+    Ray ray;
+    //CS164: init ray with endpoint (camera position) and world position 
+    ray = Ray(camera.position, camera.World_Position(pixel_index));
     vec3 color=Cast_Ray(ray,1);
     camera.Set_Pixel(pixel_index,Pixel_Color(color));
 }
