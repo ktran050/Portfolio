@@ -1,5 +1,6 @@
 // Test that fork fails gracefully.
 // Tiny executable so that the limit can be filling the proc table.
+//cs 153
 
 #include "types.h"
 #include "stat.h"
@@ -16,7 +17,7 @@ printf(int fd, char *s, ...)
 void
 forktest(void)
 {
-  int n, pid, status;
+  int n, pid;
 
   printf(1, "fork test\n");
 
@@ -30,19 +31,19 @@ forktest(void)
 
   if(n == N){
     printf(1, "fork claimed to work N times!\n", N);
-    exit(0);
+    exit(-1);
   }
 
   for(; n > 0; n--){
-    if(wait(&status) < 0){
+    if(wait(NULL) < 0){
       printf(1, "wait stopped early\n");
-      exit(0);
+      exit(-1);
     }
   }
 
-  if(wait(&status) != -1){
+  if(wait(NULL) != -1){
     printf(1, "wait got too many\n");
-    exit(0);
+    exit(-1);
   }
 
   printf(1, "fork test OK\n");

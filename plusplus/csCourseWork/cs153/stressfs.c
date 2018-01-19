@@ -6,6 +6,7 @@
 // after about 5 runs of stressfs in QEMU on a 2.1GHz CPU:
 //    for (i = 0; i < 40000; i++)
 //      asm volatile("");
+//cs 153
 
 #include "types.h"
 #include "stat.h"
@@ -16,7 +17,7 @@
 int
 main(int argc, char *argv[])
 {
-  int fd, i, status;
+  int fd, i;
   char path[] = "stressfs0";
   char data[512];
 
@@ -43,7 +44,7 @@ main(int argc, char *argv[])
     read(fd, data, sizeof(data));
   close(fd);
 
-  wait(&status);
+  wait(NULL);
 
   exit(0);
 }

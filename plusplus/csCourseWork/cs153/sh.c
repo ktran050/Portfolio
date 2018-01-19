@@ -1,4 +1,5 @@
 // Shell.
+//cs 153
 
 #include "types.h"
 #include "user.h"
@@ -57,7 +58,7 @@ struct cmd *parsecmd(char*);
 void
 runcmd(struct cmd *cmd)
 {
-  int p[2], status;
+  int p[2];
   struct backcmd *bcmd;
   struct execcmd *ecmd;
   struct listcmd *lcmd;
@@ -84,7 +85,7 @@ runcmd(struct cmd *cmd)
     close(rcmd->fd);
     if(open(rcmd->file, rcmd->mode) < 0){
       printf(2, "open %s failed\n", rcmd->file);
-      exit(0);
+      exit(-1);
     }
     runcmd(rcmd->cmd);
     break;
@@ -93,7 +94,7 @@ runcmd(struct cmd *cmd)
     lcmd = (struct listcmd*)cmd;
     if(fork1() == 0)
       runcmd(lcmd->left);
-    wait(&status);
+    wait(NULL);
     runcmd(lcmd->right);
     break;
 
@@ -117,8 +118,8 @@ runcmd(struct cmd *cmd)
     }
     close(p[0]);
     close(p[1]);
-    wait(&status);
-    wait(&status);
+    wait(NULL);
+    wait(NULL);
     break;
 
   case BACK:
@@ -146,7 +147,6 @@ main(void)
 {
   static char buf[100];
   int fd;
-  int status;
 
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){
@@ -167,7 +167,7 @@ main(void)
     }
     if(fork1() == 0)
       runcmd(parsecmd(buf));
-    wait(&status);
+    wait(NULL);
   }
   exit(0);
 }

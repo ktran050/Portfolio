@@ -1,4 +1,5 @@
 // Simple grep.  Only supports ^ . * $ operators.
+//cs 153
 
 #include "types.h"
 #include "stat.h"
@@ -43,7 +44,7 @@ main(int argc, char *argv[])
 
   if(argc <= 1){
     printf(2, "usage: grep pattern [file ...]\n");
-    exit(0);
+    exit(-1);
   }
   pattern = argv[1];
 

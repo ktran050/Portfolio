@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+//cs 153
 
 struct {
   struct spinlock lock;
@@ -88,6 +89,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->pVal = 20;
 
   release(&ptable.lock);
 
@@ -223,18 +225,21 @@ fork(void)
 
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
-// until its parent calls wait() to find out it exited.
+// until its parent calls wait(int *status) to find out it exited.
 void
-exit(status)
+exit(int status)
 {
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
 
-  curproc->exitstatus = status;
-
-  if(curproc == initproc)
+  if(curproc == initproc){
+    curproc->exitstatus=-1;
     panic("init exiting");
+  }
+
+  // Set the exitstatus of the current process
+  curproc->exitstatus=status;
 
   // Close all open files.
   for(fd = 0; fd < NOFILE; fd++){
@@ -251,20 +256,8 @@ exit(status)
 
   acquire(&ptable.lock);
 
-  // Parent might be sleeping in wait().
+  // Parent might be sleeping in wait(int *status).
   wakeup1(curproc->parent);
-  
-  if(curproc->wpid_pindex != 0) {
-      int i;
-      for(i = 0; i< curproc->wpid_pindex; i++)
-      {
-        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-        {
-          if(p->pid == curproc->wpidpar[i])
-            wakeup1(p);
-        }
-      }
-  }
 
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -278,6 +271,7 @@ exit(status)
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
   sched();
+  curproc->exitstatus=-1;
   panic("zombie exit");
 }
 
@@ -309,8 +303,8 @@ wait(int *status)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-		if(status != 0)
-	  		*status = p->exitstatus;
+	  if(status != NULL)		// if we don't receive NULL as an arg
+	    *status = p->exitstatus;	// if we DO receive null the child exit status does nothing
         release(&ptable.lock);
         return pid;
       }
@@ -319,8 +313,8 @@ wait(int *status)
     // No point waiting if we don't have any children.
     if(!havekids || curproc->killed){
       release(&ptable.lock);
-      if(status != 0)
-	*status = -1;
+      if(status != NULL)
+        *status = -1;
       return -1;
     }
 
@@ -330,23 +324,32 @@ wait(int *status)
 }
 
 int 
-waitpid(int pid, int *status, int options) 
-{
+waitpid(int pid, int *status, int options){
   struct proc *p;
-  int havekids;
   struct proc *curproc = myproc();
-
+  bool found = false;
+  
   acquire(&ptable.lock);
   for(;;){
-    // Scan through table looking for exited children.
-    havekids = 0;
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != curproc)
+
+    // Scan through table looking for the process with the passed in PID
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+      if(p->pid != pid)
         continue;
-      havekids = 1;
+      else {
+    	found = true;
+    	break;
+      }
+    }  
+    if(!found) {
+      release(&ptable.lock);
+      if(status != NULL)		// if we don't receive NULL as an arg
+		*status = -1;
+	return -1;
+  }
+  else {
+  	for(;;){
       if(p->state == ZOMBIE){
-        // Found one.
-        pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -355,29 +358,37 @@ waitpid(int pid, int *status, int options)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-		if(status != 0)
-	  		*status = p->exitstatus;
+	if(status != NULL)		// if we don't receive NULL as an arg
+	  *status= p->exitstatus;	// if we DO receive null the child exit status does nothing
         release(&ptable.lock);
         return pid;
       }
-      else {
-      	p->wpidpar[p->wpid_pindex]=curproc->pid;
-        p->wpid_pindex++;
-        break;
-	  } 
+      else if (p->state == UNUSED) {
+        if (status != NULL)
+          *status = p->exitstatus;
+        release(&ptable.lock);
+        return(pid);
+	  }
+	  sleep(curproc, &ptable.lock);
     }
-
-    // No point waiting if we don't have any children.
-    if(!havekids || curproc->killed){
-      release(&ptable.lock);
-      if(status != 0)
-	*status = -1;
-      return -1;
-    }
-
-    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
-    sleep(curproc, &ptable.lock);  //DOC: wait-sleep
+    
+    // Wait for the process with the PID to exit
+    sleep(curproc, &ptable.lock);
   }
+}
+}
+
+int pset(int pVal){
+  struct proc *curproc=myproc();
+  
+  if(pVal<0)
+    curproc->pVal=0;
+  else if(pVal>0)
+    curproc->pVal=63;
+  else
+    curproc->pVal=pVal;
+
+  return 0;
 }
 
 //PAGEBREAK: 42
@@ -388,10 +399,11 @@ waitpid(int pid, int *status, int options)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+
 void
 scheduler(void)
 {
-  struct proc *p;
+  struct proc *p, *h, *i;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -401,9 +413,34 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+
+
+    h=ptable.proc;
+
+      // Find a baseline value
+      for(i = ptable.proc; i < &ptable.proc[NPROC]; i++){
+        if(i->state == RUNNABLE){
+          h = i;
+          break;
+        }
+      }
+
+      // Find the highest priority value
+      for(i = ptable.proc; i < &ptable.proc[NPROC]; i++){
+        if((i->state == RUNNABLE)&&(i->pVal > h->pVal))
+          h = i;
+      }
+
+
+
+
+
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
+
+      if(p != h)
         continue;
+      if(h->state != RUNNABLE)
+        break;
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it

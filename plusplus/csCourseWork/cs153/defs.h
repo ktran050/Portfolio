@@ -1,3 +1,4 @@
+//cs 153
 struct buf;
 struct context;
 struct file;
@@ -104,7 +105,6 @@ int             pipewrite(struct pipe*, char*, int);
 //PAGEBREAK: 16
 // proc.c
 int             cpuid(void);
-//void            exit(void);
 void            exit(int status);
 int             fork(void);
 int             growproc(int);
@@ -119,9 +119,10 @@ void            setproc(struct proc*);
 void            sleep(void*, struct spinlock*);
 void            userinit(void);
 int             wait(int *status);
-int             waitpid(int pid, int *status, int options);
 void            wakeup(void*);
 void            yield(void);
+int		waitpid(int pid, int *status, int options);
+int		pset(int pVal);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

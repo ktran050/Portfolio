@@ -1,6 +1,8 @@
 #include "types.h"
 #include "stat.h"
 #include "user.h"
+//cs 153
+
 
 char buf[512];
 
@@ -17,7 +19,7 @@ cat(int fd)
   }
   if(n < 0){
     printf(1, "cat: read error\n");
-    exit(-1);     //abnormal termination
+    exit(-1);
   }
 }
 
@@ -39,5 +41,5 @@ main(int argc, char *argv[])
     cat(fd);
     close(fd);
   }
-  exit(0);  //normal termination
+  exit(0);
 }

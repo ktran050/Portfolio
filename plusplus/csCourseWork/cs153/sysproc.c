@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+//cs 153
 
 int
 sys_fork(void)
@@ -19,26 +20,34 @@ sys_exit(void)
   int status;
   argint(0, &status);
   exit(status);
-  return 0;  // not reached
+  return 0;  
 }
 
 int
 sys_wait(void)
 {
   int* status;
-  argptr(0, (char **) &status, sizeof(int*));
+  argptr(0,(char **) &status, sizeof(int*));
   return wait(status);
 }
 
 int
 sys_waitpid(void)
 {
-  int pid, options;
+  int pid;
   int *status;
-  argint(0, &pid);
-  argptr(0, (char**)&status, sizeof(int*));
-  argint(0, &options);
+  int options;
+  argint(0,&pid);
+  argptr(1,(char**) &status, sizeof(int*));
+  argint(2,&options);
   return waitpid(pid, status, options);
+}
+
+int sys_pset(void)
+{
+  int pVal;
+  argint(0,&pVal);
+  return pset(pVal);
 }
 
 int

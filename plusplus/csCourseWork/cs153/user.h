@@ -1,12 +1,11 @@
+//cs 153
 struct stat;
 struct rtcdate;
 
 // system calls
 int fork(void);
-//int exit(void) __attribute__((noreturn));
-void exit(int status) __attribute__((noreturn));
+int exit(int status) __attribute__((noreturn));
 int wait(int *status);
-int waitpid(int pid, int *status, int options);
 int pipe(int*);
 int write(int, void*, int);
 int read(int, void*, int);
@@ -25,6 +24,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int waitpid(int pid, int *status, int options);
+int pset(int pVal);
 
 // ulib.c
 int stat(char*, struct stat*);
