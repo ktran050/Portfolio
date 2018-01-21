@@ -28,13 +28,38 @@ bool Sphere::Intersection(const Ray& ray, std::vector<Hit>& hits) const
     t1 = outrad - inrad;
     t2 = outrad + inrad;
 
-    // case both are negative
-    if( (t1<0) && (t2<0))
+    if( t1 <= 0 && t2 <= 0)    // both are neg; the only case where there is no intersection
 	return false;
-    // record the hits
-    if(t1>0)
-	tempHit
-	hits_push_back(tempHit);
+    else if( t1 > 0 && t2 <= 0){ // t1 is pos. t2 is neg or 0
+	tempHit.t = t1;
+	tempHit.ray_exiting = true;;	
+	tempHit.object = this;
+	hits.push_back( tempHit);
+	
+	//hits.push_back( Hit(this, t1, false));	
+    }
+    else if( t1 <= 0 && t2 > 0){
+	tempHit.t = t2;
+	tempHit.ray_exiting = true;	
+	tempHit.object = this;
+	hits.push_back( tempHit);
+	//hits.push_back( Hit(this, t2, true));
+    }
+    else{
+	tempHit.t = t1;
+	tempHit.ray_exiting = false;	
+	tempHit.object = this;
+	hits.push_back( tempHit);
+	//hits.push_back( Hit(this, t1, false));
+
+	tempHit.t = t2;
+	tempHit.ray_exiting = true;	
+	tempHit.object = this;
+	hits.push_back( tempHit);
+	//hits.push_back( Hit(this, t2, true));
+    }
+    return true;
+
 }
 
 vec3 Sphere::Normal(const vec3& point) const

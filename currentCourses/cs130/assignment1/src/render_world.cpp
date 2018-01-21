@@ -5,6 +5,7 @@
 #include "light.h"
 #include "ray.h"
 #include <limits>
+#include "sphere.h"
 
 
 Render_World::Render_World()
@@ -68,10 +69,23 @@ void Render_World::Render()
 // or the background color if there is no object intersection
 vec3 Render_World::Cast_Ray(const Ray& ray,int recursion_depth)
 {
-    // TODO
+    //cs130
     vec3 color;
+    vec3 dummy;
+    Hit hit;
+    //Object* obj= Closest_Interaction(ray, hitList);
+    Object* obj = Closest_Intersection(ray, hit);
 
-    // determine the color here
+    // if intersection
+    if(obj != NULL){
+    	// do stuff
+    	color=obj->material_shader->Shade_Surface(ray,dummy,dummy,1,false);
+    }
+    // else
+    else{
+    	// call background_shader
+    	color = background_shader->Shade_Surface(ray, dummy, dummy, 1, false);
+    }    
 
     return color;
 }
