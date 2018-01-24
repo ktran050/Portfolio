@@ -9,7 +9,28 @@
 bool Plane::
 Intersection(const Ray& ray, std::vector<Hit>& hits) const
 {
-    // TODO
+    // CS130
+    Hit hit;
+    hit.object=this;
+    hit.ray_exiting = true;
+
+    float nraydot = dot(normal, ray.direction);
+    float tmpT = dot(normal, x1-ray.endpoint)/nraydot;
+
+    if(nraydot == 0){
+	hit.t=0;
+	hits.push_back(hit);
+	return true;
+    }
+    else{
+	if(tmpT > 0){
+	    hit.t = tmpT;
+	    hits.push_back(hit);
+	    return true;
+	}
+	else{ return false;}
+    }
+
     return false;
 }
 

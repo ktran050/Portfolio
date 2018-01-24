@@ -6,6 +6,7 @@
 #include "ray.h"
 #include <limits>
 #include "sphere.h"
+#include <iostream>
 
 
 Render_World::Render_World()
@@ -25,35 +26,40 @@ Render_World::~Render_World()
 // return NULL.  Note that in the case of a Boolean, the object returned will be
 // the Boolean, but the object stored in hit will be the underlying primitive.
 // Any intersection with t<=small_t should be ignored.
-Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
-{
-    //CS130
-    //Set min_t to a large value
-    Object* closest = NULL;
-    int min_t = std::numeric_limits<int>::max();
-    for(unsigned i = 0; i < objects.size(); i++){
-	std::vector<Hit> hitList;
-	hitList.clear();
-	objects[i]->Intersection(ray, hitList);	// if the object is a hit with the ray push it back
+// Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
+// {
+//     //CS130
+//     //Set min_t to a large value
+// //    std::cout <<"called ci" << std::endl;
+//     Object* closest = NULL;
+//     int min_t = std::numeric_limits<int>::max();
+// 	std::cout<<"min_t: " << min_t << " \t small_t "<< small_t << std::endl;
+//     for(unsigned i = 0; i < objects.size(); i++){
+// 	std::vector<Hit> hitList;
+// //	hitList.clear();
+// 	if( objects[i]->Intersection(ray, hitList)){	// if the object is a hit with the ray push it back
 		
-	// for each hit in hitList
-	for(unsigned b = 0; b < hitList.size(); b++){
-	    if(hitList[i].t < min_t && hitList[i].t > small_t){	// new closer hit
-	    	closest = objects[i];
-	    	hit = hitList[i];// set hit to h
-	    	min_t = hitList[i].t;	// update min_t
-	    }
-	}
-    }
-    return closest;
-}
+// 	// for each hit in hitList
+// 	for(unsigned b = 0; b < hitList.size(); b++){
+// 	    if(hitList[b].t < min_t && hitList[b].t > small_t){	// new closer hit
+// 		std::cout<<"I hit something"<<std::endl;
+// 	    	closest = objects[i];
+// 	    	hit = hitList[b];// set hit to h
+// 	    	min_t = hitList[b].t;	// update min_t
+// 	    }
+// 	}
+// 	}
+//     }
+//     return closest;
+// }
 
 // set up the initial view ray and call
 void Render_World::Render_Pixel(const ivec2& pixel_index)
 {
     Ray ray;
     //CS130: init ray with endpoint (camera position) and world position 
-    ray = Ray(camera.position, camera.World_Position(pixel_index));
+    ray = Ray(camera.position, (camera.World_Position(pixel_index)-camera.position).normalized());
+//    ray = Ray(camera.position, (camera.position-camera.World_Position(pixel_index)).normalized());
     vec3 color=Cast_Ray(ray,1);
     camera.Set_Pixel(pixel_index,Pixel_Color(color));
 }
@@ -88,4 +94,27 @@ vec3 Render_World::Cast_Ray(const Ray& ray,int recursion_depth)
     }    
 
     return color;
+}
+
+Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
+{
+    //CS130
+    //Set min_t to a large value
+    Object* closest = NULL; // value to be returned
+    float min_t = std::numeric_limits<float>::max();
+    
+    for(unsigned i = 0; i < objects.size(); i++){
+    	std::vector<Hit> hitList;
+    	if( objects[i]->Intersection(ray, hitList)){	// if the object is a hit with the ray push it back
+        	// for each hit in hitList
+        	for(unsigned b = 0; b < hitList.size(); b++){
+        	    if(hitList[b].t < min_t && hitList[b].t > small_t){	// new closer hit
+        	    	closest = objects[i];
+        	    	hit = hitList[b];// set hit to h
+        	    	min_t = hitList[b].t;	// update min_t
+        	    }
+        	}
+	    }
+    }
+    return closest;
 }

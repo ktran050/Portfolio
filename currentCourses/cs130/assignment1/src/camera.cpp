@@ -45,6 +45,6 @@ vec3 Camera::World_Position(const ivec2& pixel_index)
     vec2 ccenter = Cell_Center(pixel_index);
 
     //CS130: camera pos = bottom left corner + horiz.vec*center(x) + vert.vec*center*(y);
-    result = this->film_position; + horizontal_vector*ccenter[0] + vertical_vector*ccenter[1]; 
+    result = this->film_position + horizontal_vector*ccenter[0] + vertical_vector*ccenter[1]; 
     return result;
 }
