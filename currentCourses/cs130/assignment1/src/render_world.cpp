@@ -46,19 +46,24 @@ vec3 Render_World::Cast_Ray(const Ray& ray,int recursion_depth)
     //cs130
     vec3 color;
     vec3 dummy;
+    vec3 normal;
     Hit hit;
     //Object* obj= Closest_Interaction(ray, hitList);
     Object* obj = Closest_Intersection(ray, hit);
-
+	
+    if(hit.ray_exiting)
+	normal = hit.object->Normal(ray.Point(hit.t)) * -1;
+    else
+	normal = hit.object->Normal(ray.Point(hit.t));
     // if intersection
     if(obj != NULL){
     	// do stuff
-    	color=obj->material_shader->Shade_Surface(ray,dummy,dummy,1,false);
+    	color=obj->material_shader->Shade_Surface(ray, ray.Point(hit.t), normal, 1, hit.ray_exiting);
     }
     // else
     else{
     	// call background_shader
-    	color = background_shader->Shade_Surface(ray, dummy, dummy, 1, false);
+    	color = background_shader->Shade_Surface(ray, ray.Point(hit.t), normal, 1, hit.ray_exiting);
     }    
 
     return color;
@@ -83,6 +88,7 @@ Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
         	    }
         	}
 	    }
+
     }
     return closest;
 }
