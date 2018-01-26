@@ -21,38 +21,6 @@ Render_World::~Render_World()
     for(size_t i=0;i<lights.size();i++) delete lights[i];
 }
 
-// Find the closest object of intersection and return the object that was
-// intersected.  Record the Hit structure in hit.  If no intersection occurred,
-// return NULL.  Note that in the case of a Boolean, the object returned will be
-// the Boolean, but the object stored in hit will be the underlying primitive.
-// Any intersection with t<=small_t should be ignored.
-// Object* Render_World::Closest_Intersection(const Ray& ray,Hit& hit)
-// {
-//     //CS130
-//     //Set min_t to a large value
-// //    std::cout <<"called ci" << std::endl;
-//     Object* closest = NULL;
-//     int min_t = std::numeric_limits<int>::max();
-// 	std::cout<<"min_t: " << min_t << " \t small_t "<< small_t << std::endl;
-//     for(unsigned i = 0; i < objects.size(); i++){
-// 	std::vector<Hit> hitList;
-// //	hitList.clear();
-// 	if( objects[i]->Intersection(ray, hitList)){	// if the object is a hit with the ray push it back
-		
-// 	// for each hit in hitList
-// 	for(unsigned b = 0; b < hitList.size(); b++){
-// 	    if(hitList[b].t < min_t && hitList[b].t > small_t){	// new closer hit
-// 		std::cout<<"I hit something"<<std::endl;
-// 	    	closest = objects[i];
-// 	    	hit = hitList[b];// set hit to h
-// 	    	min_t = hitList[b].t;	// update min_t
-// 	    }
-// 	}
-// 	}
-//     }
-//     return closest;
-// }
-
 // set up the initial view ray and call
 void Render_World::Render_Pixel(const ivec2& pixel_index)
 {
