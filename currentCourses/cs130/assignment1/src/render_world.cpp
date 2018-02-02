@@ -51,19 +51,16 @@ vec3 Render_World::Cast_Ray(const Ray& ray,int recursion_depth)
     //Object* obj= Closest_Interaction(ray, hitList);
     Object* obj = Closest_Intersection(ray, hit);
 	
-    if(hit.ray_exiting)
-	normal = hit.object->Normal(ray.Point(hit.t)) * -1;
-    else
-	normal = hit.object->Normal(ray.Point(hit.t));
-    // if intersection
-    if(obj != NULL){
-    	// do stuff
+    if(obj != NULL && recursion_depth <= recursion_depth_limit){
+        if(hit.ray_exiting) // Calculate normals depending on whether we are exiting
+	        normal = hit.object->Normal(ray.Point(hit.t)) * -1;
+        else
+	        normal = hit.object->Normal(ray.Point(hit.t));
+
     	color=obj->material_shader->Shade_Surface(ray, ray.Point(hit.t), normal, 1, hit.ray_exiting);
     }
-    // else
     else{
-    	// call background_shader
-    	color = background_shader->Shade_Surface(ray, ray.Point(hit.t), normal, 1, hit.ray_exiting);
+    	color = background_shader->Shade_Surface(ray, dummy, dummy, 1, false);
     }    
 
     return color;
