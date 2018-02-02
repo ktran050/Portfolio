@@ -63,6 +63,6 @@ bool Sphere::Intersection(const Ray& ray, std::vector<Hit>& hits) const
 vec3 Sphere::Normal(const vec3& point) const
 {
     vec3 normal;
-    // TODO: set the normal
+    normal = (point - center).normalized(); // CS130
     return normal;
 }

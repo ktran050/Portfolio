@@ -1,0 +1,6 @@
+g++ -Wall -g -O3 -std=c++11 -c -DNO_OPENGL -o src/reflective_shader.o src/reflective_shader.cpp
+g++ -Wall -g -O3 -std=c++11 -c -DNO_OPENGL -o src/render_world.o src/render_world.cpp
+src/render_world.cpp:69:6: error: expected constructor, destructor, or type conversion before ‘Render_World’
+ vec3 Render_World::Cast_Ray(const Ray& ray,int recursion_depth)
+      ^
+make: *** [src/render_world.o] Error 1

@@ -1,3 +1,4 @@
+
 #include "plane.h"
 #include "ray.h"
 #include <cfloat>
