@@ -85,6 +85,7 @@ MGLpoly_mode curr_type;
 vec3 curr_color;
 vector<Vertex> curr_vertices;
 vector<Triangle> triangles;
+MGLmatrix_mode matMode;
 //ModelView;
 //Projection;
 
@@ -234,6 +235,7 @@ void mglVertex3(MGLfloat x,
  */
 void mglMatrixMode(MGLmatrix_mode mode)
 {
+    matMode = mode;
 }
 
 /**
