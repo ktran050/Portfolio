@@ -211,8 +211,26 @@ void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* da
         for(unsigned h = 0; h < height; h++){        
             // Calculate the barycentric coordinate of the pixel (Suggestion: use a helper function that calculates the area of a triangle given vertices)
                 totalArea = magnitude(cross(B-A,C-A))/2;// Total area = magnitude ((B - A) x (C - A))/2
+
                 // Repeat for APB/ APC / BPC
+                APB = magnitude(cross(B-A,P-A)) / 2;
+                APC = magnitude(cross(C-A,P-A)) / 2;
+                BPC = magnitude(cross(B-C,P-B)) / 2;
+
+                // Make sure all the values are positive
+                if(APB < 0)
+                    APB *= -1;
+                if(APC < 0)
+                    APC *= -1;
+                if(BPC < 0)
+                    BPC *= -1;
+                if(totalArea < 0)
+                    totalArea *= -1;
+
             // Decide if the pixel is in the triangle and if so color the pixel
+                if((APB + APC + BPC) == totalArea){   // point is not in the triangle
+
+                }
         }
     }
 }
