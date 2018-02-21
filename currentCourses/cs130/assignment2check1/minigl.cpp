@@ -87,7 +87,10 @@ vector<Vertex> curr_vertices;
 vector<Triangle> triangles;
 MGLmatrix_mode matMode;
 //ModelView;
-//Projection;
+mat4 projection;
+
+
+void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* data);
 
 /**
  * Read pixel data starting with the pixel at coordinates
@@ -106,9 +109,16 @@ void mglReadPixels(MGLsize width,
                    MGLpixel *data)
 {
     // for each triangle
-    for(unsigned t = 0; t < triangles.size(); t++){
-       Rasterize_Triangle(triangles.at(i), width, height, data); 
+    for(int i = 0; i < width; i++){
+        for(int j = 0; j < height; j++){
+            data[i+j*width] = Make_Pixel(0,0,0);
+        }
     }
+
+    for(unsigned t = 0; t < triangles.size(); t++){
+       Rasterize_Triangle(triangles.at(t), width, height, data); 
+    }
+    triangles.clear();
 }
 
 /**
@@ -153,8 +163,9 @@ void mglEnd()
             for(unsigned i = 0; i < curr_vertices.size(); i+=3){                 
                 vert1 = curr_vertices.at(i);
                 vert2 = curr_vertices.at(i+1);
-                vert2 = curr_vertices.at(i+2);
+                vert3 = curr_vertices.at(i+2);
                 triangles.push_back( Triangle(vert1,vert2,vert3));
+//            std::cout<< "vert1 " << vert1.position << " vert2 " << vert2.position << " vert3 " <<  vert3.position  << std::endl;
             }
             curr_vertices.clear();
             break;
@@ -175,6 +186,10 @@ void mglEnd()
 
             // Create quads based on two triangles given our vertices
             for(unsigned i = 0; i < curr_vertices.size(); i +=4){ 
+                vert1 = curr_vertices.at(i);
+                vert2 = curr_vertices.at(i+1);
+                vert3 = curr_vertices.at(i+2);
+                vert4 = curr_vertices.at(i+3);
                 triangles.push_back( Triangle(vert1,vert2,vert3));
                 triangles.push_back( Triangle(vert1,vert3,vert4));
             }
@@ -192,48 +207,82 @@ void mglEnd()
 /* Get a Triangle, width, height, and data
  * rasterize the triangle by setting colors in data cs130
 */
+
 void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* data){
     // calculate the pixel coordinates of the vertices
-    vec3 A = ((tri.Vertex1 + 1) / 2 * width - 0.5,    
-                (tri.Vertex1 + 1) / 2 * height - 0.5,
-                0 ); 
-    vec3 B = ((tri.Vertex2 + 1) / 2 * width - 0.5,   
-                (tri.Vertex2 + 1) / 2 * height - 0.5,
+    vec3 A = vec3(((tri.Vertex1.position[0] + 1) / 2 * width - 0.5),
+                ((tri.Vertex1.position[1] + 1) / 2 * height - 0.5),
                 0 );
-    vec3 C = ((tri.Vertex3 + 1) / 2 * width - 0.5,    
-                (tri.Vertex3 + 1) / 2 * height - 0.5,
+    vec3 B = vec3(((tri.Vertex2.position[0] + 1) / 2 * width - 0.5),   
+                ((tri.Vertex2.position[1] + 1) / 2 * height - 0.5),
                 0 );
+    vec3 C = vec3(((tri.Vertex3.position[0] + 1) / 2 * width - 0.5),    
+                ((tri.Vertex3.position[1] + 1) / 2 * height - 0.5),
+                0 );
+//    std::cout << "A: " << A << std::endl;
+//   std::cout << "B: " << B << std::endl;
+//    std::cout << "C: " << C << std::endl;
 
     float totalArea, APB, APC, BPC; 
+    vec3 temp1, temp2, P, ttemp;
 
     // For pixel on the screen (screen is width x height)
-    for(unsigned w = 0; w < width; w++){
-        for(unsigned h = 0; h < height; h++){        
+    for(int w = 0; w < width; w++){
+        for(int h = 0; h < height; h++){        
+            // Current Pixel
+            P[0] = w; P[1] = h;
+//            std::cout << "height: " << height << " width: " << width << " total area: " << height*width << std::endl;
             // Calculate the barycentric coordinate of the pixel (Suggestion: use a helper function that calculates the area of a triangle given vertices)
-                totalArea = magnitude(cross(B-A,C-A))/2;// Total area = magnitude ((B - A) x (C - A))/2
+            temp1 = B - A; temp2 = C - A;
+//            std::cout<< "temp1[0]: " << temp1[0] << " temp1[1]: " << temp1[1] << std::endl;
+//            std::cout<< "temp2[0]: " << temp2[0] << " temp2[1]: " << temp2[1] << std::endl;
+            ttemp  = (cross(temp1, temp2));
+//            std::cout<<"ttemp[0]: " << ttemp[0] << " ttemp[1]: " << ttemp[1] << std::endl;
+            totalArea = ((cross(temp1, temp2)).magnitude()/2);// Total area = magnitude ((B - A) x (C - A))/2
+//            std::cout << "total area: " << totalArea << std::endl;
 
-                // Repeat for APB/ APC / BPC
-                APB = magnitude(cross(B-A,P-A)) / 2;
-                APC = magnitude(cross(C-A,P-A)) / 2;
-                BPC = magnitude(cross(B-C,P-B)) / 2;
+            // Repeat for APB/ APC / BPC
+            temp2 = P - A;  // temp1 = B - A still
+            APB = (cross(temp1,temp2)).magnitude() /2;
+            temp1 = C - A; // temp2 = P - A
+            APC = (cross(temp1,temp2)).magnitude() /2;
+            temp1 = B - C; temp2 = P-B;
+            BPC = (cross(temp1,temp2)).magnitude() /2;
 
-                // Make sure all the values are positive
-                if(APB < 0)
-                    APB *= -1;
-                if(APC < 0)
-                    APC *= -1;
-                if(BPC < 0)
-                    BPC *= -1;
-                if(totalArea < 0)
-                    totalArea *= -1;
+
+            // Make sure all the values are positive
+            if(APB < 0)
+                APB *= -1;
+            if(APC < 0)
+                APC *= -1;
+            if(BPC < 0)
+                BPC *= -1;
+            if(totalArea < 0)
+                totalArea *= -1;
+
+          if( (w > 200) && (w < 270) && (h > 150) && (h < 200)){
+//          std::cout << "APB: " << APB << " APC: " << APC << " BPC: " << BPC << std::endl;
+//          std::cout << "coords: " << w << ", " << h << std::endl;
+          }
 
             // Decide if the pixel is in the triangle and if so color the pixel
-                if((APB + APC + BPC) == totalArea){   // point is not in the triangle
-
-                }
+            if((APB + APC + BPC)/totalArea == 1){   // point is in the triangle
+                data[w+h*width] = Make_Pixel(255,255,255);// draw
+                std::cout<<"Drew a point in the triangle"<<std::endl;
+            }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Specify a two-dimensional vertex; the x- and y-coordinates
