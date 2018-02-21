@@ -106,16 +106,8 @@ void mglReadPixels(MGLsize width,
                    MGLpixel *data)
 {
     // for each triangle
-    //   transform to pixel coord
-    for(unsigned w = 0; w < width; w++){
-        for(unsigned h = 0; h < height; h++){
-            curr_color = curr_color;
-		// p = (w,h)
-		// a, b, c
-		// alpha, beta, gamma
-		// if (...>0)
-		// 	draw the pixel
-        }
+    for(unsigned t = 0; t < triangles.size(); t++){
+       Rasterize_Triangle(triangles.at(i), width, height, data); 
     }
 }
 
@@ -202,9 +194,27 @@ void mglEnd()
 */
 void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* data){
     // calculate the pixel coordinates of the vertices
+    vec3 A = ((tri.Vertex1 + 1) / 2 * width - 0.5,    
+                (tri.Vertex1 + 1) / 2 * height - 0.5,
+                0 ); 
+    vec3 B = ((tri.Vertex2 + 1) / 2 * width - 0.5,   
+                (tri.Vertex2 + 1) / 2 * height - 0.5,
+                0 );
+    vec3 C = ((tri.Vertex3 + 1) / 2 * width - 0.5,    
+                (tri.Vertex3 + 1) / 2 * height - 0.5,
+                0 );
+
+    float totalArea, APB, APC, BPC; 
+
     // For pixel on the screen (screen is width x height)
-    // Calculate the barycentric coordinate of the pixel (Suggestion: use a helper function that calculates the area of a triangle given vertices)
-    // Decide if the pixel is in the triangle and if so color the pixel
+    for(unsigned w = 0; w < width; w++){
+        for(unsigned h = 0; h < height; h++){        
+            // Calculate the barycentric coordinate of the pixel (Suggestion: use a helper function that calculates the area of a triangle given vertices)
+                totalArea = magnitude(cross(B-A,C-A))/2;// Total area = magnitude ((B - A) x (C - A))/2
+                // Repeat for APB/ APC / BPC
+            // Decide if the pixel is in the triangle and if so color the pixel
+        }
+    }
 }
 
 /**
