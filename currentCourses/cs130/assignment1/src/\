@@ -1,0 +1,28 @@
+#include "reflective_shader.h"
+#include "ray.h"
+#include "render_world.h"
+#include "phong_shader.h"
+#include "light.h"
+
+vec3 Reflective_Shader::
+Shade_Surface(const Ray& ray,const vec3& intersection_point,
+    const vec3& same_side_normal,int recursion_depth,bool is_exiting) const
+{
+    vec3 reflect_Dir, L, reflect_Color, shade_color;
+    vec3 n = same_side_normal;
+
+    shade_color = shader->Shade_Surface(ray, intersection_point, same_side_normal, recursion_depth, is_exiting);
+//    for(auto T : world.lights){
+        // compute reflected direction
+//        L = (T->position - intersection_point).normalized();a
+        L = world.camera.position - intersection_point;
+        reflect_Dir = (2*dot(L,n.normalized())*n - L).normalized();
+
+
+        if((reflectivity > 0) && (recursion_depth < world.recursion_depth_limit)){
+            Ray reflected; reflected.direction = reflect_Dir; reflected.endpoint = ray.endpoint;
+            reflect_Color += world.Cast_Ray(reflected, recursion_depth+1) * reflectivity;
+        } 
+//    }
+    return shade_color + reflect_Color;
+}
