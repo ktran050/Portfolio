@@ -77,20 +77,77 @@ struct Triangle{
 
 };
 
-
-/* CS130
- * Useful global variables
-*/
-MGLpoly_mode curr_type;
-vec3 curr_color;
+// Triangle/Vertex globals
 vector<Vertex> curr_vertices;
 vector<Triangle> triangles;
-MGLmatrix_mode matMode;
-//ModelView;
-mat4 projection;
+MGLpoly_mode curr_type;
+vec3 curr_color;
+
+// Matrix globals
+MGLmatrix_mode matMode = MGL_MODELVIEW;
+vector<mat4> matrices;
+mat4 curr_mat = { 1, 0, 0, 0,
+                  0, 1, 0, 0,
+                  0, 0, 1, 0,
+                  0, 0, 0, 1};
+mat4 projection = { 1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1};
 
 
-void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* data);
+/* Get a Triangle, width, height, and data
+ * rasterize the triangle by setting colors in data cs130
+*/
+void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* data){
+    // calculate the pixel coordinates of the vertices
+    vec3 A = vec3(((tri.Vertex1.position[0] + 1) / 2 * width - 0.5),
+                ((tri.Vertex1.position[1] + 1) / 2 * height - 0.5),
+                0 );
+    vec3 B = vec3(((tri.Vertex2.position[0] + 1) / 2 * width - 0.5),   
+                ((tri.Vertex2.position[1] + 1) / 2 * height - 0.5),
+                0 );
+    vec3 C = vec3(((tri.Vertex3.position[0] + 1) / 2 * width - 0.5),    
+                ((tri.Vertex3.position[1] + 1) / 2 * height - 0.5),
+                0 );
+    float totalArea, APB, APC, BPC; 
+    vec3 temp1, temp2, P, ttemp;
+
+    // For pixel on the screen (screen is width x height)
+    for(int w = 0; w < width; w++){
+        for(int h = 0; h < height; h++){        
+            // Current Pixel
+            P[0] = w; P[1] = h;
+            temp1 = B - A; temp2 = C - A;
+            ttemp  = (cross(temp1, temp2));
+            totalArea = ((cross(temp1, temp2)).magnitude()/2);// Total area = magnitude ((B - A) x (C - A))/2
+
+            // Repeat for APB/ APC / BPC
+            temp2 = P - A;  // temp1 = B - A still
+            APB = (cross(temp1,temp2)).magnitude() /2;
+            temp1 = C - A; // temp2 = P - A
+            APC = (cross(temp1,temp2)).magnitude() /2;
+            temp1 = B - C; temp2 = P-B;
+            BPC = (cross(temp1,temp2)).magnitude() /2;
+
+            // Make sure all the values are positive
+            if(APB < 0)
+                APB *= -1;
+            if(APC < 0)
+                APC *= -1;
+            if(BPC < 0)
+                BPC *= -1;
+            if(totalArea < 0)
+                totalArea *= -1;
+
+            // Decide if the pixel is in the triangle and if so color the pixel
+            if((APB + APC + BPC)/totalArea == 1){   // point is in the triangle
+                data[w+h*width] = Make_Pixel(255,255,255);// draw
+                std::cout<<"Drew a point in the triangle"<<std::endl;
+            }
+        }
+    }
+}
 
 /**
  * Read pixel data starting with the pixel at coordinates
@@ -109,8 +166,8 @@ void mglReadPixels(MGLsize width,
                    MGLpixel *data)
 {
     // for each triangle
-    for(int i = 0; i < width; i++){
-        for(int j = 0; j < height; j++){
+    for(unsigned i = 0; i < width; i++){
+        for(unsigned j = 0; j < height; j++){
             data[i+j*width] = Make_Pixel(0,0,0);
         }
     }
@@ -165,7 +222,6 @@ void mglEnd()
                 vert2 = curr_vertices.at(i+1);
                 vert3 = curr_vertices.at(i+2);
                 triangles.push_back( Triangle(vert1,vert2,vert3));
-//            std::cout<< "vert1 " << vert1.position << " vert2 " << vert2.position << " vert3 " <<  vert3.position  << std::endl;
             }
             curr_vertices.clear();
             break;
@@ -203,85 +259,6 @@ void mglEnd()
             break;
     }
 }
-
-/* Get a Triangle, width, height, and data
- * rasterize the triangle by setting colors in data cs130
-*/
-
-void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* data){
-    // calculate the pixel coordinates of the vertices
-    vec3 A = vec3(((tri.Vertex1.position[0] + 1) / 2 * width - 0.5),
-                ((tri.Vertex1.position[1] + 1) / 2 * height - 0.5),
-                0 );
-    vec3 B = vec3(((tri.Vertex2.position[0] + 1) / 2 * width - 0.5),   
-                ((tri.Vertex2.position[1] + 1) / 2 * height - 0.5),
-                0 );
-    vec3 C = vec3(((tri.Vertex3.position[0] + 1) / 2 * width - 0.5),    
-                ((tri.Vertex3.position[1] + 1) / 2 * height - 0.5),
-                0 );
-//    std::cout << "A: " << A << std::endl;
-//   std::cout << "B: " << B << std::endl;
-//    std::cout << "C: " << C << std::endl;
-
-    float totalArea, APB, APC, BPC; 
-    vec3 temp1, temp2, P, ttemp;
-
-    // For pixel on the screen (screen is width x height)
-    for(int w = 0; w < width; w++){
-        for(int h = 0; h < height; h++){        
-            // Current Pixel
-            P[0] = w; P[1] = h;
-//            std::cout << "height: " << height << " width: " << width << " total area: " << height*width << std::endl;
-            // Calculate the barycentric coordinate of the pixel (Suggestion: use a helper function that calculates the area of a triangle given vertices)
-            temp1 = B - A; temp2 = C - A;
-//            std::cout<< "temp1[0]: " << temp1[0] << " temp1[1]: " << temp1[1] << std::endl;
-//            std::cout<< "temp2[0]: " << temp2[0] << " temp2[1]: " << temp2[1] << std::endl;
-            ttemp  = (cross(temp1, temp2));
-//            std::cout<<"ttemp[0]: " << ttemp[0] << " ttemp[1]: " << ttemp[1] << std::endl;
-            totalArea = ((cross(temp1, temp2)).magnitude()/2);// Total area = magnitude ((B - A) x (C - A))/2
-//            std::cout << "total area: " << totalArea << std::endl;
-
-            // Repeat for APB/ APC / BPC
-            temp2 = P - A;  // temp1 = B - A still
-            APB = (cross(temp1,temp2)).magnitude() /2;
-            temp1 = C - A; // temp2 = P - A
-            APC = (cross(temp1,temp2)).magnitude() /2;
-            temp1 = B - C; temp2 = P-B;
-            BPC = (cross(temp1,temp2)).magnitude() /2;
-
-
-            // Make sure all the values are positive
-            if(APB < 0)
-                APB *= -1;
-            if(APC < 0)
-                APC *= -1;
-            if(BPC < 0)
-                BPC *= -1;
-            if(totalArea < 0)
-                totalArea *= -1;
-
-          if( (w > 200) && (w < 270) && (h > 150) && (h < 200)){
-//          std::cout << "APB: " << APB << " APC: " << APC << " BPC: " << BPC << std::endl;
-//          std::cout << "coords: " << w << ", " << h << std::endl;
-          }
-
-            // Decide if the pixel is in the triangle and if so color the pixel
-            if((APB + APC + BPC)/totalArea == 1){   // point is in the triangle
-                data[w+h*width] = Make_Pixel(255,255,255);// draw
-                std::cout<<"Drew a point in the triangle"<<std::endl;
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
 
 
 /**
@@ -321,6 +298,7 @@ void mglMatrixMode(MGLmatrix_mode mode)
  */
 void mglPushMatrix()
 {
+    matrices.push_back( matrices.back());
 }
 
 /**
@@ -329,6 +307,7 @@ void mglPushMatrix()
  */
 void mglPopMatrix()
 {
+    matrices.pop_back();
 }
 
 /**
@@ -336,6 +315,10 @@ void mglPopMatrix()
  */
 void mglLoadIdentity()
 {
+    curr_mat =  {1, 0, 0, 0,
+                 0, 1, 0, 0,
+                 0, 0, 1, 0,
+                 0, 0, 0, 1};
 }
 
 /**
@@ -352,6 +335,10 @@ void mglLoadIdentity()
  */
 void mglLoadMatrix(const MGLfloat *matrix)
 {
+    curr_mat = {matrix[0], matrix[1], matrix[2], matrix[3],
+                matrix[4], matrix[5], matrix[6], matrix[7],
+                matrix[8], matrix[8], matrix[10], matrix[11],
+                matrix[12], matrix[13], matrix[14], matrix[15]};
 }
 
 /**
@@ -364,10 +351,14 @@ void mglLoadMatrix(const MGLfloat *matrix)
  *   ( a2  a6  a10 a14 )
  *   ( a3  a7  a11 a15 )
  *
- * where ai is the i'th entry of the array.
+ * where ai is the i'th entry of the array. (current x new)
  */
 void mglMultMatrix(const MGLfloat *matrix)
 {
+    for(unsigned i = 0; i < 4; i++)
+        for(unsigned j = 0; j < 4; j++)
+            newMat(i,j) = matrix[4*j+i];
+    curr_mat = curr_mat * newMat;
 }
 
 /**
@@ -426,6 +417,20 @@ void mglOrtho(MGLfloat left,
               MGLfloat near,
               MGLfloat far)
 {
+    float tx = right+left / right-left;
+    float ty = top+bottom / top-bottom;
+    float tz = far+near / far-near;
+
+    float x = 2/right-left;
+    float y = 2/top-bottom;
+    float z = -2/far-near;
+
+     //mat4 orthoMat = {2/right-left, 0, 0, tx, // first col (top to bot)
+                      //0, 2/top-bottom, 0, ty,
+                      //0, 0, -2/far-near, tz,
+                      //0, 0, 0, 1};
+    // TODO: figure out the push/pop
+    mglMultMatrix(orthoMat);
 }
 
 /**
