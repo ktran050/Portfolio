@@ -85,29 +85,27 @@ vec3 curr_color;
 
 // Matrix globals
 MGLmatrix_mode matMode = MGL_MODELVIEW;
-vector<mat4> matrices;
-mat4 curr_mat = { 1, 0, 0, 0,
-                  0, 1, 0, 0,
-                  0, 0, 1, 0,
-                  0, 0, 0, 1};
-mat4 projection = { 1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0,
-                    0, 0, 0, 1};
-
+mat4 ident = { 1, 0, 0, 0,
+               0, 1, 0, 0,
+               0, 0, 1, 0,
+               0, 0, 0, 1};
+vector<mat4> projMats = {ident};
+vector<mat4> modelMats = {ident};
+mat4 curr_proj = ident;
+mat4 curr_model = ident;
 
 /* Get a Triangle, width, height, and data
  * rasterize the triangle by setting colors in data cs130
 */
 void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* data){
     // calculate the pixel coordinates of the vertices
-    vec3 A = vec3(((tri.Vertex1.position[0] + 1) / 2 * width - 0.5),
+    vec3 A = vec3((((tri.Vertex1.position[0] + 1) / 2 * width) - 0.5),
                 ((tri.Vertex1.position[1] + 1) / 2 * height - 0.5),
                 0 );
-    vec3 B = vec3(((tri.Vertex2.position[0] + 1) / 2 * width - 0.5),   
+    vec3 B = vec3((((tri.Vertex2.position[0] + 1) / 2 * width) - 0.5),   
                 ((tri.Vertex2.position[1] + 1) / 2 * height - 0.5),
                 0 );
-    vec3 C = vec3(((tri.Vertex3.position[0] + 1) / 2 * width - 0.5),    
+    vec3 C = vec3((((tri.Vertex3.position[0] + 1) / 2 * width) - 0.5),    
                 ((tri.Vertex3.position[1] + 1) / 2 * height - 0.5),
                 0 );
     float totalArea, APB, APC, BPC; 
@@ -143,10 +141,25 @@ void Rasterize_Triangle(const Triangle& tri, int width, int height, MGLpixel* da
             // Decide if the pixel is in the triangle and if so color the pixel
             if((APB + APC + BPC)/totalArea == 1){   // point is in the triangle
                 data[w+h*width] = Make_Pixel(255,255,255);// draw
-                std::cout<<"Drew a point in the triangle"<<std::endl;
             }
         }
     }
+}
+
+mat4& topStack(){
+    if(matMode == MGL_PROJECTION)
+        return projMats.back();
+    //if(matMode == MGL_MODELVIEW)
+    else
+        return modelMats.back();
+}
+
+mat4& currMat(){
+    if(matMode == MGL_PROJECTION)
+        return projMats.back();
+    //if(matMode == MGL_MODELVIEW)
+    else
+        return modelMats.back();
 }
 
 /**
@@ -281,7 +294,9 @@ void mglVertex3(MGLfloat x,
                 MGLfloat y,
                 MGLfloat z)
 {
-    curr_vertices.push_back(Vertex(curr_color,vec4(x,y,z,1))); // push back with curr_color and coords given
+    vec4 curr_pos = vec4(x,y,z,1);
+    curr_pos = projMats.back() * modelMats.back() * curr_pos;
+    curr_vertices.push_back(Vertex(curr_color, curr_pos));
 }
 
 /**
@@ -298,7 +313,11 @@ void mglMatrixMode(MGLmatrix_mode mode)
  */
 void mglPushMatrix()
 {
-    matrices.push_back( matrices.back());
+    if(matMode == MGL_PROJECTION)
+        projMats.push_back( projMats.back());
+    if(matMode == MGL_MODELVIEW)
+        modelMats.push_back( modelMats.back());
+
 }
 
 /**
@@ -307,7 +326,10 @@ void mglPushMatrix()
  */
 void mglPopMatrix()
 {
-    matrices.pop_back();
+    if(matMode == MGL_PROJECTION)
+        projMats.pop_back();
+    if(matMode == MGL_MODELVIEW)
+        modelMats.pop_back();
 }
 
 /**
@@ -315,10 +337,8 @@ void mglPopMatrix()
  */
 void mglLoadIdentity()
 {
-    curr_mat =  {1, 0, 0, 0,
-                 0, 1, 0, 0,
-                 0, 0, 1, 0,
-                 0, 0, 0, 1};
+    currMat() = topStack();
+    currMat() = ident;
 }
 
 /**
@@ -335,7 +355,7 @@ void mglLoadIdentity()
  */
 void mglLoadMatrix(const MGLfloat *matrix)
 {
-    curr_mat = {matrix[0], matrix[1], matrix[2], matrix[3],
+    currMat() = {matrix[0], matrix[1], matrix[2], matrix[3],
                 matrix[4], matrix[5], matrix[6], matrix[7],
                 matrix[8], matrix[8], matrix[10], matrix[11],
                 matrix[12], matrix[13], matrix[14], matrix[15]};
@@ -351,14 +371,18 @@ void mglLoadMatrix(const MGLfloat *matrix)
  *   ( a2  a6  a10 a14 )
  *   ( a3  a7  a11 a15 )
  *
- * where ai is the i'th entry of the array. (current x new)
+ * where ai is the i'th entry of the array.
  */
 void mglMultMatrix(const MGLfloat *matrix)
 {
-    for(unsigned i = 0; i < 4; i++)
-        for(unsigned j = 0; j < 4; j++)
+    // Construct the matrix based on the array
+    mat4 newMat;
+    for(unsigned i = 0; i < 4; i++) // traverse row
+        for(unsigned j = 0; j < 4; j++) // traverse columns
             newMat(i,j) = matrix[4*j+i];
-    curr_mat = curr_mat * newMat;
+    // Calculate product
+    currMat() = newMat * currMat();
+    std::cout << currMat() << std::endl; 
 }
 
 /**
@@ -425,12 +449,9 @@ void mglOrtho(MGLfloat left,
     float y = 2/top-bottom;
     float z = -2/far-near;
 
-     //mat4 orthoMat = {2/right-left, 0, 0, tx, // first col (top to bot)
-                      //0, 2/top-bottom, 0, ty,
-                      //0, 0, -2/far-near, tz,
-                      //0, 0, 0, 1};
     // TODO: figure out the push/pop
-    mglMultMatrix(orthoMat);
+    mat4 orthoMat = {{x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, -tx, -ty, -tz, 1}};
+    topStack() = orthoMat * topStack();
 }
 
 /**
