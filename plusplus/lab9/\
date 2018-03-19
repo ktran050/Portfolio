@@ -1,0 +1,68 @@
+# CS164 lab6
+ #from mininet.topo import Topo
+ #from mininet.net import Mininet
+ #from mininet.util import dumpNodeConnections
+ #from mininet.log import setLogLevel
+from mininet.node import Host, OVSSwitch, Controller
+from mininet.link import Link
+
+
+b1 = Host( 'b1' )
+b2 = Host( 'b2' )
+b3 = Host( 'b3' )
+b4 = Host( 'b4' )
+s1 = OVSSwitch( 's1', inNamespace = False )
+c0 = Controller( 'c0', inNamespace = False )
+Link( b1, s1 )
+Link( b2, s1 )
+Link( b3, s1 )
+Link( b4, s1 )
+b1.setIP = ( '10.0.0.1' )
+b2.setIP = ( '10.0.0.2' )
+b3.setIP = ( '10.0.0.3' )
+b4.setIP = ( '10.0.0.4' )
+c0.start()
+s1.start( [c0] )
+print b1.IP
+print b2.IP
+print b3.IP
+print b4.IP
+#print b1.cmd( 'ping -c3', b2.IP() )
+s1.stop()
+c0.stop()
+
+ #class lab9topo( Topo ):
+     #"Simple topology example."
+     #def __init__( self ):
+       #"Create custom topo."
+       ##Initialize topology
+       #Topo.__init__( self )
+       ## Add hosts and switches
+       #h1 = self.addHost( 'b1' )
+       #h2 = self.addHost( 'b2' )
+       #h3 = self.addHost( 'b3' )
+       #h4 = self.addHost( 'b4' )
+       #mainSwitch = self.addSwitch( 's1' )
+       ## Add links
+       #self.addLink( h1, mainSwitch )
+       #self.addLink( h2, mainSwitch )
+       #self.addLink( h3, mainSwitch )
+       #self.addLink( h4, mainSwitch )
+       #h1.setIP('10.0.0.1')
+       #h2.setIP('10.0.0.2')
+       #h3.setIP('10.0.0.3')
+       #h4.setIP('10.0.0.4')
+ #
+ #def runExperiment():
+   #topo = lab9topo( )
+   #net = Mininet(topo)
+   #net.start()
+   #print "Dumping host connections"
+   #dumpNodeConnections(net.hosts)
+   #print "Testing network connectivity"
+   #net.pingAll()
+   #net.stop()
+ #
+ #if __name__ == '__main__':
+   #setLogLevel('info')
+   #runExperiment() 
