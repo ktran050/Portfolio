@@ -1,0 +1,5 @@
+choose arbitary password == potato
+hashed arbitary password == wIKxYDJceIIfXtiOOFSur0   
+verify our hashing program works
+crack team password
+crack bonus password

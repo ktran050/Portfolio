@@ -1,0 +1,3 @@
+glLoadIdentity
+glLoadIdentity
+glBegin GL_QUADS
